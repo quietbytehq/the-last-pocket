@@ -1,4 +1,4 @@
-# Public release verification — 0.5.4
+# Public release verification — 0.5.5
 
 - Clean public source: 13 isolated headless suites, 18,850 assertions, zero failed assertions.
 - Clean Linux x86-64 export: all 41 compiled runtime checks passed.
@@ -10,3 +10,5 @@
 
 
 Version0.5.4 changes packaging metadata only: the Snap licence label uses the compatible capitalized Proprietary spelling. Source code remains Apache-2.0; bundled music has separate terms. Gameplay code is identical to the tested0.5.3 build.
+
+Version0.5.5 corrects only the selected application/store icon. The full-resolution asset matches the supplied pocket-and-eight-ball design exactly (SHA25614dacd3ae66607d33b73785dedef259263fec49394f54bbe3f2dde685ba187e4). All20 focused presentation assertions passed; gameplay is unchanged.

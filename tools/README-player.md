@@ -30,7 +30,7 @@ Local play has ten modes. Versus AI is the sequential 8-ball championship. These
 
 Original stereo impact placeholders are included. Put your personal MP3 effects and music in the `audio` subfolder, using the filenames in AUDIO_BRIEF.md, and restart. The supplied two-minute stereo hotel-lobby track is included. Gameplay is designed for calm hotel-lobby lounge music. Music and SFX have separate icons and Pause switches, plus N / M shortcuts.
 
-The Last Pocket 0.5.4 by QuietByte. Pocketed-table graphics use a detailed rendered table plate with live 3D balls, cue, shadows and interactive physics. The overhead view is fixed; carom retains the earlier 3D table.
+The Last Pocket 0.5.5 by QuietByte. Pocketed-table graphics use a detailed rendered table plate with live 3D balls, cue, shadows and interactive physics. The overhead view is fixed; carom retains the earlier 3D table.
 
 QuietByte · hello@quietbytehq.uk
 

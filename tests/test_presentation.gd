@@ -55,6 +55,6 @@ func run():
  game.rules.ball_in_hand=false;game.sim.place(0,Vector2(-0.9,0.25));game.state="aim"
  var key=InputEventKey.new();key.keycode=KEY_SPACE;key.pressed=true;game._unhandled_input(key)
  check(game.state=="rolling","Space fires deliberate shot at selected power")
- check(FileAccess.get_sha256("res://assets/ui/icon.png")=="ddc5d5ad6ef0dc81e26e9db83e2339b3091ea7c3e288aaa98603c64f7e2e32a8","Chosen third icon is installed")
+ check(FileAccess.get_sha256("res://assets/ui/icon.png")=="14dacd3ae66607d33b73785dedef259263fec49394f54bbe3f2dde685ba187e4","Selected pocket-and-8-ball icon is installed")
  print("PASS" if failures==0 else "FAIL",": ",checks," presentation checks, ",failures," failures")
  await game.prepare_to_close();quit(0 if failures==0 else 1)

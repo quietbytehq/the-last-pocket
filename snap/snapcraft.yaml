@@ -1,7 +1,7 @@
 name: the-last-pocket
 title: The Last Pocket
 base: core24
-version: '0.5.4'
+version: '0.5.5'
 summary: Pool and snooker with local versus and a 48-rival AI championship
 description: |
   Play ten cue-sports modes on one Linux PC, including 8-ball, 9-ball,
