@@ -1,7 +1,7 @@
 name: the-last-pocket
 title: The Last Pocket
 base: core24
-version: '0.5.3'
+version: '0.5.4'
 summary: Pool and snooker with local versus and a 48-rival AI championship
 description: |
   Play ten cue-sports modes on one Linux PC, including 8-ball, 9-ball,
@@ -14,7 +14,7 @@ description: |
   Source code is Apache-2.0; bundled music has separate redistribution terms.
 grade: stable
 confinement: strict
-license: proprietary
+license: Proprietary
 contact: hello@quietbytehq.uk
 website: https://github.com/quietbytehq/the-last-pocket
 source-code: https://github.com/quietbytehq/the-last-pocket

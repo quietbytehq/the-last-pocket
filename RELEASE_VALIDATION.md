@@ -1,4 +1,4 @@
-# Public release verification — 0.5.3
+# Public release verification — 0.5.4
 
 - Clean public source: 13 isolated headless suites, 18,850 assertions, zero failed assertions.
 - Clean Linux x86-64 export: all 41 compiled runtime checks passed.
@@ -8,3 +8,5 @@
 - Code and original project graphics/effects: Apache-2.0. Full font/engine notices included. Public redistribution of the supplied music was confirmed by the project owner; it remains separately licensed for distribution within the game.
 - Some Dummy-audio teardown runs emit Godot MP3 playback/resource reference warnings. They do not fail the assertions; normal playback, mute and save/restore checks pass.
 
+
+Version0.5.4 changes packaging metadata only: the Snap licence label uses the compatible capitalized Proprietary spelling. Source code remains Apache-2.0; bundled music has separate terms. Gameplay code is identical to the tested0.5.3 build.
