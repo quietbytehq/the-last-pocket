@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=The Last Pocket
+Comment=Pool, snooker and a 48-rival championship
+Exec=the-last-pocket
+Icon=${SNAP}/meta/gui/the-last-pocket.png
+Terminal=false
+Type=Application
+Categories=Game;SportsGame;
+StartupNotify=true

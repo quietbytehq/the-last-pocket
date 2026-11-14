@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://dojegm1ucuun5"
+
+[deps]
+
+files=["res://docs/RIVAL_VOICE_LINES.tier.translation", "res://docs/RIVAL_VOICE_LINES.character.translation", "res://docs/RIVAL_VOICE_LINES.delivery.translation", "res://docs/RIVAL_VOICE_LINES.exact.translation"]
+
+source_file="res://docs/RIVAL_VOICE_LINES.csv"
+dest_files=["res://docs/RIVAL_VOICE_LINES.tier.translation", "res://docs/RIVAL_VOICE_LINES.character.translation", "res://docs/RIVAL_VOICE_LINES.delivery.translation", "res://docs/RIVAL_VOICE_LINES.exact.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

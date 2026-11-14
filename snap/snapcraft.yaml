@@ -1,0 +1,34 @@
+name: the-last-pocket
+title: The Last Pocket
+base: core24
+version: '0.5.3'
+summary: Pool and snooker with local versus and a 48-rival AI championship
+description: |
+  Play ten cue-sports modes on one Linux PC, including 8-ball, 9-ball,
+  10-ball, straight pool, blackball, snooker and carom. Share controls with
+  a friend or enter a 48-rival AI championship from Amateur to GOAT.
+  Includes original comic portraits, upgraded tables, three continue diamonds,
+  local high scores, animated aiming, stereo effects and lounge music.
+  Offline play with separate music and sound controls. Targets 60 FPS;
+  actual performance depends on hardware. Linux x86-64, OpenGL 3.3 required.
+  Source code is Apache-2.0; bundled music has separate redistribution terms.
+grade: stable
+confinement: strict
+license: proprietary
+contact: hello@quietbytehq.uk
+website: https://github.com/quietbytehq/the-last-pocket
+source-code: https://github.com/quietbytehq/the-last-pocket
+issues: https://github.com/quietbytehq/the-last-pocket/issues
+icon: snap/gui/the-last-pocket.png
+platforms:
+  amd64:
+apps:
+  the-last-pocket:
+    command: bin/launch-the-last-pocket
+    extensions: [gnome]
+    plugs: [audio-playback]
+parts:
+  game:
+    plugin: dump
+    source: build/snap-payload
+    stage-packages: [libasound2t64, libpulse0, libxinerama1, libxcursor1, libxi6, libxrandr2]
