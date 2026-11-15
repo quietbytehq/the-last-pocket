@@ -5,6 +5,8 @@ const Table=preload("res://scripts/table.gd")
 const Campaign=preload("res://scripts/campaign.gd")
 const Board=preload("res://scripts/leaderboard.gd")
 const AIPlanner=preload("res://scripts/ai.gd")
+const Controls=preload("res://scripts/controls.gd")
+var controls=Controls.new()
 const Overlay=preload("res://scripts/overlay.gd")
 var campaign=Campaign.new()
 var leaderboard=Board.new()
@@ -58,6 +60,10 @@ func _ready() -> void:
  DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
  get_tree().auto_accept_quit=false
  get_tree().root.close_requested.connect(quit_game)
+ Input.joy_connection_changed.connect(func(_device: int,connected: bool):
+  if not connected:
+   controls.clear()
+   if controls.mode=="gamepad":pause_play())
  pointer_position=get_viewport().get_mouse_position()
  DisplayServer.window_set_title("The Last Pocket")
  table=Table.new();add_child(table)
@@ -80,6 +86,7 @@ func start_match(mode: int) -> void:
  if campaign.kind=="local":campaign.phase="playing";campaign.finished=false;campaign.last_won=false
  table.upgrade=campaign.tier() if campaign.kind!="local" else 0
  rules.configure(mode,sim);table.configure(sim,rules);ui.prime_ball_badges();_apply_render_scale()
+ controls.clear()
  state="aim";aim_locked=false;pocketed_by=[[],[]];charging=false;spin=Vector2.ZERO;power=0.45;stationary_time=0
  ui.help_panel.visible=false;ui.refresh_calls()
  placements=sim.ball(rules.cue_id()).p
@@ -110,6 +117,7 @@ func _physics_process(dt: float) -> void:
   handled+=1
 
 func _process(dt: float) -> void:
+ controls.tick(self,dt)
  play_time+=dt
  _tick_ai(dt)
  if state!="menu" and state!="paused":
@@ -128,9 +136,9 @@ func _process(dt: float) -> void:
   var mouse =pointer_position
   var point: Vector2=table.screen_to_table(mouse)
   var b: Dictionary=sim.ball(rules.cue_id())
-  if rules.ball_in_hand:
+  if rules.ball_in_hand and controls.mode=="mouse":
    placements=point.clamp(-sim.half_size+Vector2.ONE*sim.radius,sim.half_size-Vector2.ONE*sim.radius)
-  elif not aim_locked and not charging and not power_drag and not spin_drag and (ui.get_global_transform().affine_inverse()*pointer_position).y>145 and (ui.get_global_transform().affine_inverse()*pointer_position).y<760 and absf(point.x)<=sim.half_size.x+0.04 and absf(point.y)<=sim.half_size.y+0.04:
+  elif not rules.ball_in_hand and controls.mode=="mouse" and not aim_locked and not charging and not power_drag and not spin_drag and (ui.get_global_transform().affine_inverse()*pointer_position).y>145 and (ui.get_global_transform().affine_inverse()*pointer_position).y<760 and absf(point.x)<=sim.half_size.x+0.04 and absf(point.y)<=sim.half_size.y+0.04:
    var direction: Vector2=point-b.p
    if direction.length()>sim.radius: aim=direction.normalized()
   if power_drag:
@@ -145,6 +153,30 @@ func _process(dt: float) -> void:
 func _input(event: InputEvent) -> void:
  if event is InputEventMouseMotion or event is InputEventMouseButton:
   pointer_position=event.position
+  if event is InputEventMouseButton or event.relative.length()>0.5:controls.mode="mouse"
+ if event is InputEventJoypadMotion:
+  controls.axes[event.axis]=event.axis_value
+  if absf(event.axis_value)>Controls.DEADZONE:
+   controls.mode="gamepad"
+   if state not in ["aim","rolling","title"] and event.axis in [JOY_AXIS_LEFT_X,JOY_AXIS_LEFT_Y] and absf(event.axis_value)>0.65:
+    if absf(float(get_meta("menu_axis_%d" % event.axis,0.0)))<=0.65:ui.move_input_focus(Vector2(signf(event.axis_value),0) if event.axis==JOY_AXIS_LEFT_X else Vector2(0,signf(event.axis_value)))
+  set_meta("menu_axis_%d" % event.axis,event.axis_value)
+  get_viewport().set_input_as_handled();return
+ if event is InputEventJoypadButton:
+  controls.mode="gamepad";controls.keys[event.button_index]=event.pressed
+  if event.pressed:_pad_pressed(event.button_index)
+  get_viewport().set_input_as_handled();return
+ if event is InputEventKey:
+  controls.keys[event.keycode]=event.pressed
+  if event.pressed:controls.mode="keyboard"
+  if state=="aim" and human_turn() and not ui.help_panel.visible:
+   if event.keycode in [KEY_LEFT,KEY_RIGHT,KEY_UP,KEY_DOWN,KEY_A,KEY_D,KEY_W,KEY_S,KEY_I,KEY_J,KEY_K,KEY_L,KEY_SHIFT]:
+    get_viewport().set_input_as_handled();return
+   if event.pressed and not event.echo:
+    if event.keycode in [KEY_SPACE,KEY_ENTER]:controls.confirm(self);get_viewport().set_input_as_handled();return
+    if event.keycode in [KEY_Q,KEY_E]:controls.cycle_pocket(self,-1 if event.keycode==KEY_Q else 1);get_viewport().set_input_as_handled();return
+    if event.keycode==KEY_C:controls.cycle_ball(self);get_viewport().set_input_as_handled();return
+    if event.keycode==KEY_R:spin=Vector2.ZERO;get_viewport().set_input_as_handled();return
  if state=="title":
   if event is InputEventKey and event.pressed and not event.echo:
    if event.keycode==KEY_M:toggle_sound()
@@ -164,6 +196,9 @@ func _unhandled_input(event: InputEvent) -> void:
  if event is InputEventKey and event.pressed and not event.echo:
   if event.keycode==KEY_M:toggle_sound();return
   if event.keycode==KEY_N:toggle_music();return
+ if ui.help_panel.visible:
+  if event is InputEventKey and event.pressed and event.keycode in [KEY_ESCAPE,KEY_H]:ui.help_panel.visible=false
+  return
  if state=="saves":
   if event is InputEventKey and event.pressed and event.keycode==KEY_ESCAPE:ui.close_saves()
   return
@@ -206,6 +241,7 @@ func _unhandled_input(event: InputEvent) -> void:
   charging=false;return
  if event is InputEventMouseButton:
   if not human_turn():return
+  if state!="aim" or rules.match_over or ui.help_panel.visible:return
   if event.button_index==MOUSE_BUTTON_WHEEL_UP and event.pressed: power=clampf(power+0.05,0.03,1.0);return
   if event.button_index==MOUSE_BUTTON_WHEEL_DOWN and event.pressed: power=clampf(power-0.05,0.03,1.0);return
   if state!="aim" or rules.match_over or ui.help_panel.visible: return
@@ -235,8 +271,40 @@ func _unhandled_input(event: InputEvent) -> void:
   if sim.pocketed_table:
    for k in range(sim.pockets().size()):
     if p.distance_to(sim.pockets()[k])<sim.pocket_radius*1.6: select_pocket(k);return
-  if p.distance_to(sim.ball(rules.cue_id()).p)>sim.radius:
+  if aim_locked:
+   strike()
+  elif p.distance_to(sim.ball(rules.cue_id()).p)>sim.radius:
    aim=(p-sim.ball(rules.cue_id()).p).normalized();aim_locked=true
+
+func _notification(what: int) -> void:
+ if what==NOTIFICATION_WM_WINDOW_FOCUS_OUT:
+  controls.clear();charging=false;power_drag=false;spin_drag=false
+
+func _pad_pressed(button: int) -> void:
+ if state=="title":
+  state="menu";ui.show_hub();_play_sound("ui_confirm");return
+ if button==JOY_BUTTON_START and state in ["aim","rolling","paused"]:
+  toggle_pause();return
+ if button==JOY_BUTTON_B:
+  if ui.help_panel.visible:ui.help_panel.visible=false
+  elif state=="saves":ui.close_saves()
+  elif state=="journey":ui.close_journey()
+  elif state in ["aim","rolling","paused"]:toggle_pause()
+  elif state=="menu":
+   if ui.menu_page=="hub":state="title"
+   else:ui.show_hub()
+  return
+ if state not in ["aim","rolling"] or ui.help_panel.visible:
+  if button==JOY_BUTTON_A:ui.activate_input_focus()
+  elif button in [JOY_BUTTON_DPAD_LEFT,JOY_BUTTON_DPAD_RIGHT,JOY_BUTTON_DPAD_UP,JOY_BUTTON_DPAD_DOWN]:
+   ui.move_input_focus({JOY_BUTTON_DPAD_LEFT:Vector2.LEFT,JOY_BUTTON_DPAD_RIGHT:Vector2.RIGHT,JOY_BUTTON_DPAD_UP:Vector2.UP,JOY_BUTTON_DPAD_DOWN:Vector2.DOWN}[button])
+  return
+ if state!="aim" or not human_turn():return
+ if button==JOY_BUTTON_A:controls.confirm(self)
+ elif button==JOY_BUTTON_LEFT_SHOULDER:controls.cycle_pocket(self,-1)
+ elif button==JOY_BUTTON_RIGHT_SHOULDER:controls.cycle_pocket(self,1)
+ elif button==JOY_BUTTON_X:controls.cycle_ball(self)
+ elif button==JOY_BUTTON_Y:spin=Vector2.ZERO;aim_locked=false
 
 func needs_pocket_call() -> bool:
  return (rules.mode==0 and rules.groups[rules.player]>=0 and rules.remaining_group(sim,rules.groups[rules.player])==0) or (rules.mode in [2,3] and not rules.break_shot)
@@ -245,7 +313,7 @@ func shot_call_prompt() -> String:
  if rules.mode in [2,3] and not rules.break_shot and rules.called_ball<0:
   return "Select your called ball below, then choose a numbered pocket."
  if needs_pocket_call() and rules.called_pocket<0:
-  return "8-ball: choose a pocket — click 1–6 on the table or press its number." if rules.mode==0 else "Choose a pocket — click 1–6 on the table or press its number."
+  return "8-ball: call a pocket — click 1–6, use Q/E or gamepad LB/RB." if rules.mode==0 else "Choose a pocket — click 1–6 on the table or press its number."
  return ""
 
 func select_pocket(index: int) -> void:
@@ -271,6 +339,7 @@ func open_menu() -> void:
  ui.show_hub();_music_context()
 func pause_play() -> void:
  if state not in ["aim","rolling"]:return
+ controls.clear()
  pause_origin=state;state="paused"
  charging=false;power_drag=false;spin_drag=false;ui.help_panel.visible=false
 

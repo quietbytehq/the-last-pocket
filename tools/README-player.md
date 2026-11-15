@@ -30,9 +30,27 @@ Local play has ten modes. Versus AI is the sequential 8-ball championship. These
 
 Original stereo impact placeholders are included. Put your personal MP3 effects and music in the `audio` subfolder, using the filenames in AUDIO_BRIEF.md, and restart. The supplied two-minute stereo hotel-lobby track is included. Gameplay is designed for calm hotel-lobby lounge music. Music and SFX have separate icons and Pause switches, plus N / M shortcuts.
 
-The Last Pocket 0.6.0 by QuietByte. Pocketed-table graphics use a detailed rendered table plate with live 3D balls, cue, shadows and interactive physics. The overhead view is fixed; carom retains the earlier 3D table.
+The Last Pocket 0.6.1 by QuietByte. Pocketed-table graphics use a detailed rendered table plate with live 3D balls, cue, shadows and interactive physics. The overhead view is fixed; carom retains the earlier 3D table.
 
 QuietByte · hello@quietbytehq.uk
 
 Source code: https://github.com/quietbytehq/the-last-pocket
 Apache-2.0 source code; bundled media terms are in NOTICE.
+
+## Mouse, keyboard and gamepad
+
+Mouse: move to aim, click the cloth once to lock direction, then click again to fire. Right-click unlocks; the wheel or left meter sets power. Clicking during ball in hand only places the cue ball. The on-screen Shoot button also fires.
+
+Keyboard: Left/Right or A/D rotates aim; Up/Down or W/S sets power. Hold Shift for fine aim or slower placement. During ball in hand, arrows/WASD move the cue ball and Space/Enter places it. Press Space/Enter again to shoot. I/J/K/L adjusts spin; R resets it. Q/E cycles pockets, or use 1–6; C cycles called balls or snooker colours. Tab/arrows navigate menus and Enter chooses.
+
+Gamepad (standard mapped layout): left stick aims or moves the cue ball; A places or shoots. Triggers or D-pad Up/Down adjust power; D-pad Left/Right fine-tunes aim. Right stick sets spin; Y resets it. LB/RB cycles pockets; X cycles called balls/colours. Start pauses/resumes. B pauses at the table or goes back in menus. D-pad/left stick navigates menus; A chooses. Controller disconnection pauses play. Xbox-labelled controls correspond to the standard mapped positions on other controllers.
+
+Gameplay inputs work only on the human turn and do not change the paused table. Moving the mouse or using keyboard/gamepad controls switches the active input hints. No controller is required to play.
+
+For the Snap build, enable controller access once:
+
+```sh
+sudo snap connect the-last-pocket:joystick
+```
+
+The package declares only the game-controller input interface; it does not request general raw-input access. See [Snap controller access](https://snapcraft.io/docs/reference/interfaces/joystick-interface/).

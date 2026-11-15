@@ -104,7 +104,7 @@ func _ready() -> void:
  mouse_filter=Control.MOUSE_FILTER_IGNORE
  var theme =Theme.new();theme.default_font=regular;theme.default_font_size=18
  for state in ["normal","hover","pressed","focus"]:
-  var style =StyleBoxFlat.new();style.bg_color=Color("142e35") if state=="normal" else Color("254952");style.border_color=Color("42636a");style.set_border_width_all(1);style.set_corner_radius_all(8);style.content_margin_left=15;style.content_margin_right=15
+  var style =StyleBoxFlat.new();style.bg_color=Color("142e35") if state=="normal" else Color("254952");style.border_color=GOLD if state=="focus" else Color("42636a");style.set_border_width_all(3 if state=="focus" else 1);style.set_corner_radius_all(8);style.content_margin_left=15;style.content_margin_right=15
   theme.set_stylebox(state,"Button",style)
  theme.set_color("font_color","Button",LIGHT);self.theme=theme
  pause_button=_button("Ⅱ",Vector2(935,20),Vector2(52,50),func():game.toggle_pause())
@@ -127,6 +127,7 @@ func _process(_dt: float) -> void:
  scale=Vector2.ONE*s;position=(vp-Vector2(1600,900)*s)*0.5
  size=Vector2(1600,900)
  if game==null: return
+ call_deferred("ensure_input_focus")
  menu.visible=game.state=="menu" and menu_page=="setup"
  _front_update()
  _sync_profiles()
@@ -141,7 +142,7 @@ func _process(_dt: float) -> void:
  pause_button.text="▶" if game.state=="paused" else "Ⅱ"
  for button in extra_buttons:button.visible=false
  play_button.visible=game.state=="aim" and game.human_turn() and not game.rules.ball_in_hand and not game.rules.match_over
- play_button.text="CHOOSE POCKET  [1–6]" if game.needs_pocket_call() and game.rules.called_pocket<0 else "SELECT BALL" if not game.shot_call_prompt().is_empty() else "SHOOT  [SPACE]"
+ play_button.text="CHOOSE POCKET  [1–6]" if game.needs_pocket_call() and game.rules.called_pocket<0 else "SELECT BALL" if not game.shot_call_prompt().is_empty() else "SHOOT  [A]" if game.controls.mode=="gamepad" else "SHOOT  [CLICK]" if game.controls.mode=="mouse" else "SHOOT  [SPACE]"
  _sync_pocket_buttons()
  play_button.disabled=game.state!="aim" or game.rules.ball_in_hand or game.rules.match_over
  call_choice.focus_mode=Control.FOCUS_NONE
@@ -150,7 +151,7 @@ func _process(_dt: float) -> void:
   game.rules.mode,game.rules.groups,game.rules.message,game.rules.target_text(game.sim),
   game.rules.remaining_group(game.sim,0),game.rules.remaining_group(game.sim,1),
   game.rules.called_pocket,game.rules.ball_in_hand,game.rules.match_over,
-  game.power,game.spin,game.aim_locked,game.pocketed_by,game.table.camera.transform,game.show_debug,
+  game.controls.mode,game.power,game.spin,game.aim_locked,game.pocketed_by,game.table.camera.transform,game.show_debug,
   Engine.get_frames_per_second() if game.show_debug else 0,game.high_quality,game.campaign.points,game.campaign.diamonds,game.campaign.rival_index,game.ai_delay>0.35])
  if signature!=draw_signature:
   draw_signature=signature;queue_redraw()
@@ -175,11 +176,13 @@ func _sync_pocket_buttons() -> void:
 func shot_hint() -> String:
  var requirement=game.shot_call_prompt()
  if not requirement.is_empty():return requirement
- if game.rules.called_pocket>=0:return "POCKET %d CALLED · SET AIM / POWER · SPACE TO SHOOT" % (game.rules.called_pocket+1)
- return "AIM LOCKED · RIGHT CLICK TO UNLOCK · SET POWER, THEN SPACE TO SHOOT" if game.aim_locked else "CLICK TO LOCK AIM · WHEEL / METER: POWER · SPACE: SHOOT"
+ if game.rules.called_pocket>=0:return "POCKET %d CALLED · SET AIM / POWER · %s TO SHOOT" % [game.rules.called_pocket+1,"A" if game.controls.mode=="gamepad" else "CLICK AGAIN" if game.controls.mode=="mouse" else "SPACE"]
+ if game.controls.mode=="gamepad":return "LEFT STICK: AIM / PLACE · TRIGGERS: POWER · A: SHOOT / PLACE · START: PAUSE"
+ if game.controls.mode=="keyboard":return "← →: AIM · ↑ ↓: POWER · SHIFT: FINE · SPACE: SHOOT / PLACE · Q/E: POCKET"
+ return "AIM LOCKED · CLICK AGAIN TO SHOOT · RIGHT CLICK TO UNLOCK" if game.aim_locked else "CLICK TO LOCK AIM · CLICK AGAIN TO SHOOT · WHEEL / METER: POWER"
 
 func _button(text: String,pos: Vector2,dimensions: Vector2,callback: Callable,parent: Node=self) -> Button:
- var button =Button.new();button.text=text;button.position=pos;button.size=dimensions;button.mouse_default_cursor_shape=Control.CURSOR_POINTING_HAND;button.focus_mode=Control.FOCUS_NONE;parent.add_child(button);button.pressed.connect(func():game._play_sound("ui_confirm",0.4);callback.call());button.mouse_entered.connect(func():game._play_sound("ui_move",0.2));return button
+ var button =Button.new();button.text=text;button.position=pos;button.size=dimensions;button.mouse_default_cursor_shape=Control.CURSOR_POINTING_HAND;button.focus_mode=Control.FOCUS_ALL;parent.add_child(button);button.pressed.connect(func():game._play_sound("ui_confirm",0.4);callback.call());button.mouse_entered.connect(func():game._play_sound("ui_move",0.2));return button
 func _panel(pos: Vector2,dimensions: Vector2) -> Panel:
  var p =Panel.new();p.position=pos;p.size=dimensions
  var style =StyleBoxFlat.new();style.bg_color=Color(0.055,0.046,0.034,0.97);style.border_color=Color("a08c65");style.set_border_width_all(1);style.set_corner_radius_all(18);style.shadow_color=Color(0,0,0,0.6);style.shadow_size=25;p.add_theme_stylebox_override("panel",style);add_child(p);return p
@@ -284,7 +287,21 @@ func close_saves() -> void:
 func _make_help() -> void:
  help_panel=_panel(Vector2(310,165),Vector2(980,595));help_panel.visible=false;help_panel.z_index=60
  _label("AT THE TABLE",Vector2(35,25),32,help_panel,GOLD)
- _label("Aim with the mouse; click the cloth to lock your direction.\nSet power with the mouse wheel or drag the left meter.\nPress SPACE / ENTER or click SHOOT when ready. Right-click unlocks aim.\n\nDrag the white spin ball at the lower right for draw, follow and side.\nWhen you have ball in hand, click a clear position on the cloth.\nSnooker placement is restricted to the D; the outline shows the baulk area.\n\nFor called shots, select a ball below and choose a numbered pocket.\nSnooker colours are nominated using the colour selector.\nH: help. ESC: pause. F11: fullscreen. M: effects. N: music. F3: FPS.\n\nClub rules are used; referee-dependent tournament exceptions are\ndocumented in RULES.md. Local players share controls. In VS AI, you are player one.",Vector2(35,90),20,help_panel,LIGHT)
+ _label("MOUSE   Move to aim · Click to lock · Click again to shoot
+Right-click unlocks · Wheel / left meter sets power · Drag white ball for spin
+
+KEYBOARD   Left / Right or A / D: aim · Up / Down or W / S: power
+During placement: arrows / WASD move cue ball · Space / Enter places or shoots
+Shift: fine adjustment · I / J / K / L: spin · R: reset spin
+1–6 or Q / E: called pocket · C: called ball / snooker colour
+
+GAMEPAD   Left stick: aim / place · D-pad left / right: fine aim
+Triggers / D-pad up / down: power · Right stick: spin · Y: reset spin
+A: place / shoot · LB / RB: pocket · X: called ball / colour · Start / B: pause
+D-pad / left stick: menu navigation · A: choose · B: back
+
+H: help · Escape: pause · F11: fullscreen · M: effects · N: music · F3: FPS
+Club rules: RULES.md. Local players share the controls.",Vector2(35,80),19,help_panel,LIGHT)
  _button("BACK TO TABLE",Vector2(35,510),Vector2(910,50),func():help_panel.visible=false,help_panel)
 
 func refresh_calls() -> void:
@@ -349,7 +366,7 @@ func _draw() -> void:
    draw_line(center+Vector2(-11,-3),center+Vector2(11,-3),Color(1,1,1,0.4),1)
   _club_text("%06d" % game.campaign.points,Vector2(225,866),18,GOLD)
  var hint=shot_hint()
- if game.rules.ball_in_hand:hint="PLACE THE CUE BALL"+(" INSIDE THE D" if game.rules.is_snooker() else " BEHIND THE HEAD STRING" if game.rules.baulk_only else " ON THE CLOTH")
+ if game.rules.ball_in_hand:hint="PLACE THE CUE BALL"+(" INSIDE THE D" if game.rules.is_snooker() else " BEHIND THE HEAD STRING" if game.rules.baulk_only else " ON THE CLOTH")+" · "+("LEFT STICK / A" if game.controls.mode=="gamepad" else "ARROWS / SPACE" if game.controls.mode=="keyboard" else "CLICK TO PLACE")
  elif not game.shot_call_prompt().is_empty():hint=game.shot_call_prompt()
  elif "FOUL" in game.rules.message:hint=game.rules.message.left(110)
  elif game.rules.is_snooker():hint="ON: "+game.rules.target_text(game.sim)
@@ -484,7 +501,7 @@ func _make_frontend():
  var pocket=_label("POCKET",Vector2(900,210),87,title_page,GOLD);pocket.add_theme_font_override("font",display_font)
  pocket.add_theme_color_override("font_shadow_color",Color(0,0,0,0.7));pocket.add_theme_constant_override("shadow_offset_y",4)
  _label("A LITTLE CHARM. A LOT OF CHALK.",Vector2(914,335),18,title_page,GOLD)
- press_hint=_label("PRESS ANY KEY TO START",Vector2(935,412),23,title_page,LIGHT)
+ press_hint=_label("PRESS ANY KEY OR GAMEPAD BUTTON",Vector2(935,412),23,title_page,LIGHT)
  _label("LOCAL VERSUS   /   THE CHAMPIONSHIP",Vector2(916,620),16,title_page,DIM)
  hub_page=Control.new();front.add_child(hub_page)
  _label("YOUR NEXT FRAME",Vector2(940,150),36,hub_page,GOLD)
@@ -713,3 +730,42 @@ func _focus_journey_card(card: Control):
  await get_tree().process_frame
  await get_tree().process_frame
  if game.state=="journey" and is_instance_valid(card):journey_scroll.ensure_control_visible(card)
+
+func input_focus_candidates() -> Array[Control]:
+ var candidates: Array[Control]=[]
+ var scope: Node=self
+ if help_panel.visible:scope=help_panel
+ elif game.state=="paused":scope=settings
+ elif game.state=="saves":scope=save_panel
+ elif game.state=="intro":scope=intro_panel
+ elif game.state=="result":scope=result_panel
+ elif game.state=="journey":scope=journey_panel
+ elif game.state=="menu":
+  scope=hub_page if menu_page=="hub" else ai_page if menu_page=="ai" else board_panel if menu_page=="board" else menu
+ else:return candidates
+ for item in scope.find_children("*","Control",true,false):
+  if item.is_visible_in_tree() and item.focus_mode!=Control.FOCUS_NONE and (item is BaseButton and not item.disabled or item is LineEdit):candidates.append(item)
+ return candidates
+func ensure_input_focus():
+ if game.controls.mode=="mouse":return
+ var candidates=input_focus_candidates()
+ var current=get_viewport().gui_get_focus_owner()
+ if not candidates.is_empty() and current not in candidates:candidates[0].grab_focus()
+func move_input_focus(direction: Vector2):
+ ensure_input_focus()
+ var current=get_viewport().gui_get_focus_owner()
+ if current==null:return
+ var origin=current.get_global_rect().get_center();var best: Control;var score=INF
+ for item in input_focus_candidates():
+  if item==current:continue
+  var offset=item.get_global_rect().get_center()-origin
+  var forward=offset.dot(direction)
+  if forward<=1:continue
+  var cost=forward+absf(offset.cross(direction))*3.0
+  if cost<score:score=cost;best=item
+ if best!=null:best.grab_focus()
+func activate_input_focus():
+ ensure_input_focus()
+ var current=get_viewport().gui_get_focus_owner()
+ if current is OptionButton:current.show_popup()
+ elif current is Button:current.pressed.emit()

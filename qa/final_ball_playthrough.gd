@@ -29,7 +29,7 @@ func run():
  click(game.ui.pocket_buttons[2]);await frames(3)
  check(game.rules.called_pocket==2,"Actual mouse click selects pocket 3")
  check(game.aim==aim and game.power==power,"Pocket selection preserves locked aim and power")
- check(game.ui.play_button.text=="SHOOT  [SPACE]","Shot becomes ready after pocket call")
+ check(game.ui.play_button.text=="SHOOT  [CLICK]","Shot becomes ready after pocket call")
  viewport.get_texture().get_image().save_png("res://qa/final-ball-called.png")
  click(game.ui.play_button);await frames(3)
  check(game.state=="rolling" and game.sim.ball(0).v.length()>0,"Actual Shoot click launches the final-ball shot")

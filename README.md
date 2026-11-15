@@ -35,8 +35,8 @@ These are playable club-rule implementations. See [RULES.md](RULES.md) for the i
 
 | Action | Control |
 | --- | --- |
-| Aim | Move the mouse over the table; click the cloth to lock direction |
-| Shoot | Press Space / Enter, or click Shoot |
+| Aim | Mouse; Left/Right or A/D; gamepad left stick |
+| Shoot | Click again after locking aim; Space / Enter; gamepad A; or Shoot button |
 | Unlock aim | Right click the table |
 | Shot power | Mouse wheel; or drag the left power meter; releasing does not shoot |
 | Cue spin | Drag the white spin control at the lower right |
@@ -52,6 +52,26 @@ These are playable club-rule implementations. See [RULES.md](RULES.md) for the i
 | FPS display | F3 |
 
 For snooker, cue-ball placement is restricted to the D. A coral ring indicates an invalid placement; the cue ball stays white. Pool opening breaks start behind the head string.
+
+
+## Mouse, keyboard and gamepad
+
+Mouse: move to aim, click the cloth once to lock direction, then click again to fire. Right-click unlocks; the wheel or left meter sets power. Clicking during ball in hand only places the cue ball. The on-screen Shoot button also fires.
+
+Keyboard: Left/Right or A/D rotates aim; Up/Down or W/S sets power. Hold Shift for fine aim or slower placement. During ball in hand, arrows/WASD move the cue ball and Space/Enter places it. Press Space/Enter again to shoot. I/J/K/L adjusts spin; R resets it. Q/E cycles pockets, or use 1–6; C cycles called balls or snooker colours. Tab/arrows navigate menus and Enter chooses.
+
+Gamepad (standard mapped layout): left stick aims or moves the cue ball; A places or shoots. Triggers or D-pad Up/Down adjust power; D-pad Left/Right fine-tunes aim. Right stick sets spin; Y resets it. LB/RB cycles pockets; X cycles called balls/colours. Start pauses/resumes. B pauses at the table or goes back in menus. D-pad/left stick navigates menus; A chooses. Controller disconnection pauses play. Xbox-labelled controls correspond to the standard mapped positions on other controllers.
+
+Gameplay inputs work only on the human turn and do not change the paused table. Moving the mouse or using keyboard/gamepad controls switches the active input hints. No controller is required to play.
+
+For the Snap build, enable controller access once:
+
+```sh
+sudo snap connect the-last-pocket:joystick
+```
+
+The package declares only the game-controller input interface; it does not request general raw-input access. See [Snap controller access](https://snapcraft.io/docs/reference/interfaces/joystick-interface/).
+
 
 ## Graphics and performance
 

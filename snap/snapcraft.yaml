@@ -1,7 +1,7 @@
 name: the-last-pocket
 title: The Last Pocket
 base: core24
-version: '0.6.0'
+version: '0.6.1'
 summary: Pool and snooker with local versus and a 48-rival AI championship
 description: |
   Play ten cue-sports modes on one Linux PC, including 8-ball, 9-ball,
@@ -10,8 +10,11 @@ description: |
   Includes original comic portraits, upgraded tables, three retry diamonds,
   ten manual tournament save slots, local high scores, animated aiming,
   stereo effects and lounge music. Rivals react to wins and losses.
+  Mouse, keyboard and mapped gamepad controls, including menu navigation.
   Offline play with separate music and sound controls. Targets 60 FPS;
   actual performance depends on hardware. Linux x86-64, OpenGL 3.3 required.
+  For gamepads, enable controller access with:
+  sudo snap connect the-last-pocket:joystick
   Source code is Apache-2.0; bundled music has separate redistribution terms.
 grade: stable
 confinement: strict
@@ -27,7 +30,7 @@ apps:
   the-last-pocket:
     command: bin/launch-the-last-pocket
     extensions: [gnome]
-    plugs: [audio-playback]
+    plugs: [audio-playback, joystick]
 parts:
   game:
     plugin: dump

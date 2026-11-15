@@ -24,7 +24,7 @@ func run():
  game.ui.pocket_buttons[2].pressed.emit();game.ui._process(0)
  check(game.rules.called_pocket==2 and game.shot_call_prompt().is_empty(),"Clicking a numbered pocket satisfies rule")
  check(game.aim==aim and game.power==power and game.state=="aim","Calling pocket preserves aim and power without firing")
- check(game.ui.play_button.text=="SHOOT  [SPACE]","Shoot label returns after valid call")
+ check(game.ui.play_button.text=="SHOOT  [CLICK]","Shoot label returns after valid call")
  check("POCKET 3 CALLED" in game.ui.shot_hint(),"Selected pocket remains visible")
  game.save_slot(0);game.rules.called_pocket=-1
  check(game.load_slot(0) and game.rules.called_pocket==2,"Pocket selection survives saved-game resume")
