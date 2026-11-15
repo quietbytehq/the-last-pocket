@@ -29,9 +29,11 @@ func run():
  result(game,1)
  check(game.campaign.diamonds==3,"Losing a frame does not spend a diamond without choosing continue")
  game.result_primary();check(game.campaign.diamonds==2 and game.campaign.rival_index==1 and game.state=="intro","Continue retries same rival and spends one diamond")
- var saved=FileAccess.open("user://match.save",FileAccess.READ).get_var(false)
+ check(not FileAccess.file_exists("user://match.save"),"No automatic progress save is created")
+ check(game.save_slot(0).ok,"Player explicitly saves introduction")
+ var saved=game._read_slot(0)
  check(game._valid_save(saved),"Tournament introduction and continue state validate for resume")
- game.open_menu();check(game.resume_match() and game.campaign.diamonds==2 and game.state=="intro","Resume restores campaign and rival introduction")
+ game.open_menu();check(game.load_slot(0) and game.campaign.diamonds==2 and game.state=="intro","Resume restores campaign and rival introduction")
  game.begin_frame();game.toggle_pause();game._tick_ai(2.0);check(game.state=="paused","AI cannot shoot while paused")
  game.toggle_pause();game._invalidate_ai();game._join_ai()
  # Cross the rank boundary with normal result handling.

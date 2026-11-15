@@ -1,0 +1,86 @@
+extends SceneTree
+var checks=0
+var failures=0
+func check(value: bool,label: String):
+ checks+=1
+ if not value:failures+=1;push_error(label)
+func _initialize():call_deferred("run")
+func run():
+ var game=load("res://scenes/main.tscn").instantiate();game.set_meta("skip_title",true);root.add_child(game)
+ await process_frame;game.set_process(false);game.set_physics_process(false);game.sound_enabled=false
+ check(game.list_save_slots().size()==10,"Exactly ten slots exist")
+ check(not game.has_method("resume_match"),"Legacy automatic resume API is removed")
+ for info in game.list_save_slots():check(info.empty,"A new install has no progress saves")
+ game.launch_tournament("ACE");game.begin_frame()
+ game.open_menu();game._save_settings()
+ for info in game.list_save_slots():check(info.empty,"Starting and leaving a tournament never saves progress")
+ check(not FileAccess.file_exists("user://match.save"),"No old automatic save is written")
+ var legacy=FileAccess.open("user://match.save",FileAccess.WRITE);legacy.store_string("legacy data kept");legacy.close()
+ var legacy_hash=FileAccess.get_sha256("user://match.save")
+ game.launch_tournament("ACE");game.begin_frame();game.pause_play()
+ game.ui.show_saves("save")
+ check(game.state=="saves","Save opens a separate frozen menu")
+ game.ui._choose_slot(0)
+ check(game.list_save_slots()[0].valid and game.list_save_slots()[0].player=="ACE","Explicit slot selection creates named save")
+ check(game._valid_save(game._read_slot(0)),"Saved data validates")
+ var first=game._read_slot(0)
+ check(first.saved_at_local.length()==19 and first.saved_at_utc>0,"Local date/time and UTC timestamp recorded")
+ check(game.ui.slot_buttons[0].text.contains("ACE") and game.ui.slot_buttons[0].text.contains(first.saved_at_local),"Slot shows name and timestamp")
+ var digest=FileAccess.get_sha256(game.slot_path(0))
+ game.power=0.91;game.ui._choose_slot(0)
+ check(game.ui.pending_slot==0 and FileAccess.get_sha256(game.slot_path(0))==digest,"Occupied save requires confirmation without overwriting")
+ game.ui.close_saves()
+ check(game.state=="saves" and game.ui.pending_slot==-1,"Escape first cancels overwrite")
+ game.ui.close_saves();check(game.state=="paused","Back returns to the pause menu")
+ game.resume_play();check(game.state=="aim","Explicit Resume returns to live game")
+ game.open_menu()
+ check(FileAccess.get_sha256(game.slot_path(0))==digest,"Progress after saving is never automatically written back")
+ for index in range(1,10):
+  game.launch_tournament("PLAYER %02d" % (index+1))
+  check(game.save_slot(index).ok,"Each slot can hold a separate tournament")
+ check(not game.save_slot(-1).ok and not game.save_slot(10).ok,"Slot bounds enforce ten-save limit")
+ check(game.list_save_slots()[9].player=="PLAYER 10","Ten distinct player records remain separate")
+ check(FileAccess.get_sha256("user://match.save")==legacy_hash,"Old automatic file is preserved but ignored")
+ game.launch_tournament("REPLACEMENT")
+ check(not game.save_slot(0).ok,"Direct occupied-slot write also requires confirmation")
+ check(game.save_slot(0,true).ok and game.list_save_slots()[0].player=="REPLACEMENT","Confirmed overwrite updates only chosen slot")
+ check(game.list_save_slots()[1].player=="PLAYER 02","Another slot is untouched")
+ check(game.load_slot(9) and game.state=="intro","Chosen tournament intro restores")
+ game.begin_frame()
+ for ball in game.sim.balls:ball.active=false;ball.fall=1.0;ball.v=Vector2.ZERO
+ game.sim.place(0,Vector2(-0.85,0.2));game.sim.place(1,Vector2(0.1,0.2))
+ game.rules.ball_in_hand=false;game.aim=Vector2.RIGHT;game.aim_locked=true;game.power=0.4
+ game.strike();game._physics_process(0.1)
+ check(game.state=="rolling","Fixture has an actual shot in motion")
+ game.pause_play();game.ui.show_saves("save")
+ check(game.save_slot(8,true).ok,"A paused mid-shot save succeeds")
+ var rolling=game._read_slot(8)
+ check(rolling.ui_state=="rolling" and rolling.balls[0].v.length()>0,"Mid-shot velocity and shot context are captured")
+ game.ui.close_saves();game.resume_play()
+ for tick in range(60):game._physics_process(1.0/120.0)
+ var expected=game.sim.balls.duplicate(true)
+ check(game.load_slot(8) and game.state=="paused" and game.pause_origin=="rolling","Loading a moving shot opens paused")
+ var frozen=game.sim.ball(0).p
+ game._physics_process(1.0)
+ check(game.sim.ball(0).p==frozen,"Loaded shot stays frozen until Resume")
+ game.resume_play()
+ for tick in range(60):game._physics_process(1.0/120.0)
+ for index in range(expected.size()):
+  check(game.sim.balls[index].p.distance_to(expected[index].p)<0.000001,"Restored shot follows identical trajectory")
+  check(game.sim.balls[index].v.distance_to(expected[index].v)<0.000001,"Restored shot preserves velocity")
+ var corrupt=rolling.duplicate(true);corrupt.shot.potted=[{"id":1000,"pocket":2}]
+ check(not game._valid_save(corrupt),"Malformed mid-shot event is rejected")
+ corrupt=rolling.duplicate(true);corrupt.before={}
+ check(not game._valid_save(corrupt),"Missing pre-shot rule context is rejected")
+ corrupt=rolling.duplicate(true);corrupt.saved_at_local="not a date"
+ check(not game._valid_save(corrupt),"Malformed timestamp is rejected")
+ var broken=FileAccess.open(game.slot_path(7),FileAccess.WRITE);broken.store_string("broken file");broken.close()
+ check(not game.list_save_slots()[7].valid and not game.load_slot(7),"Corrupt slot is safely rejected")
+ game.open_menu();game.ui.show_saves("load");game.ui._process(0)
+ check(game.ui.slot_buttons[7].disabled,"Corrupt saves cannot be loaded through menu")
+ game.ui.close_saves()
+ game.start_local(0)
+ check(not game.save_slot(5,true).ok,"Local versus cannot overwrite tournament slots")
+ print("MANUAL SLOTS: ",checks," checks, ",failures," failures")
+ await game.prepare_to_close();game.queue_free();await process_frame
+ quit(0 if failures==0 else 1)

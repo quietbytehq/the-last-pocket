@@ -1,14 +1,14 @@
-# Public release verification — 0.5.5
+# Release verification — 0.6.0
 
-- Clean public source: 13 isolated headless suites, 18,850 assertions, zero failed assertions.
-- Clean Linux x86-64 export: all 41 compiled runtime checks passed.
-- Native1920×1080, Compatibility/Performance, Intel Mesa RPL-P: pool59.66fps, snooker60.00fps, GOAT AI59.98fps across600/360/360 actual rendered frames. Hardware, driver and background load affect results; occasional frames exceed16.67ms.
-- The reported final8-ball stall was reproduced: it required a called pocket, with its instructions hidden.25 regression assertions and6 native input checks verify numbered selection and actual shooting after a call.
-- Public-tree text scan: no personal identity, absolute development paths, secrets or local account configuration found. Local/editor caches, builds, private checkpoints, user saves, logs and alternate branding drafts are excluded. Git author and committer use the QuietByte publishing identity.
-- Code and original project graphics/effects: Apache-2.0. Full font/engine notices included. Public redistribution of the supplied music was confirmed by the project owner; it remains separately licensed for distribution within the game.
-- Some Dummy-audio teardown runs emit Godot MP3 playback/resource reference warnings. They do not fail the assertions; normal playback, mute and save/restore checks pass.
+- All 15 isolated headless source suites passed: 19,585 assertions, zero failures.
+- Manual slots: 92 focused assertions, including ten independent slots, explicit overwrite confirmation, corruption rejection, no implicit progress saves and deterministic restoration of a moving shot.
+- Rival outcomes: 638 assertions verify all 48 identities, 96 unique lines and the correct victory/defeat expression routing.
+- Native mouse/keyboard playthrough: 21 manual-save/pause checks and 16 existing frontend/shooting checks passed. Save → Back → Resume, Journey → Escape → Resume and Help → Back → Resume were exercised using real viewport input events. Four new menu/result captures were visually checked.
+- Clean Linux x86-64 export: all 53 compiled runtime checks passed, including eight embedded outcome atlases, 96 result lines and ten-slot UI controls.
+- Native 1920×1080, Compatibility/Performance, Intel Mesa RPL-P: pool 59.57 fps, snooker 59.75 fps, GOAT AI 59.26 fps across 600/360/360 actual rendered frames. These are averages; occasional frames exceed 16.67 ms. Other hardware/drivers need verification.
+- Automatic progress saving is removed. Legacy match.save files are ignored and left untouched. Settings and the Top Ten remain separate local records. No real player save files were used by these tests.
+- Optional rival result recordings are not bundled: all dialogue is readable on screen, and exact filenames/lines are provided for later MP3 exports.
+- Source and original project artwork/effects: Apache-2.0. Full font/engine notices included. Supplied music remains separately licensed for distribution within the game.
+- Some Dummy-audio teardown runs emit Godot MP3 playback/resource reference warnings without failed assertions. Normal audio/mute checks pass.
 
-
-Version0.5.4 changes packaging metadata only: the Snap licence label uses the compatible capitalized Proprietary spelling. Source code remains Apache-2.0; bundled music has separate terms. Gameplay code is identical to the tested0.5.3 build.
-
-Version0.5.5 corrects only the selected application/store icon. The full-resolution asset matches the supplied pocket-and-eight-ball design exactly (SHA25614dacd3ae66607d33b73785dedef259263fec49394f54bbe3f2dde685ba187e4). All20 focused presentation assertions passed; gameplay is unchanged.
+Linux x86-64 with OpenGL 3.3-capable graphics is the supported package. The earlier strict-Snap software-rendered test confirmed functional behavior, but llvmpipe at 800×450 did not meet the 60 fps performance assertions. Native hardware performance above is the measured target; software rendering is not a 60 fps guarantee.

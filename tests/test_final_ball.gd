@@ -8,7 +8,7 @@ func _initialize():call_deferred("run")
 func run():
  var game=load("res://scenes/main.tscn").instantiate();game.set_meta("skip_title",true);root.add_child(game)
  await process_frame;game.set_process(false);game.set_physics_process(false)
- game.start_match(0);game.rules.ball_in_hand=false;game.rules.baulk_only=false;game.rules.break_shot=false;game.rules.groups=[0,1]
+ game.launch_tournament("ACE");game.begin_frame();game.rules.ball_in_hand=false;game.rules.baulk_only=false;game.rules.break_shot=false;game.rules.groups=[0,1]
  for id in range(1,8):game.sim.ball(id).active=false;game.sim.ball(id).fall=1.0
  game.sim.place(0,Vector2(-0.7,0.3));game.sim.ball(8).p=Vector2(-0.2,-0.2)
  game.aim=(game.sim.ball(8).p-game.sim.ball(0).p).normalized();game.aim_locked=true;game.power=0.47
@@ -26,9 +26,9 @@ func run():
  check(game.aim==aim and game.power==power and game.state=="aim","Calling pocket preserves aim and power without firing")
  check(game.ui.play_button.text=="SHOOT  [SPACE]","Shoot label returns after valid call")
  check("POCKET 3 CALLED" in game.ui.shot_hint(),"Selected pocket remains visible")
- game._save_match();game.rules.called_pocket=-1
- check(game.resume_match() and game.rules.called_pocket==2,"Pocket selection survives saved-game resume")
- game.ui.play_button.pressed.emit()
+ game.save_slot(0);game.rules.called_pocket=-1
+ check(game.load_slot(0) and game.rules.called_pocket==2,"Pocket selection survives saved-game resume")
+ game.resume_play();game.ui.play_button.pressed.emit()
  check(game.state=="rolling" and game.sim.ball(0).v.length()>0,"Shoot button fires after pocket selection")
  for index in range(6):
   game.state="aim";game.rules.called_pocket=-1

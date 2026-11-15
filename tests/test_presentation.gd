@@ -50,9 +50,10 @@ func run():
  for tick in range(120):game._physics_process(1.0/120.0)
  check(game.state=="aim" and 1 in game.pocketed_by[0],"Potted ball credited to shooter before turn transfers")
  check(not game.sim.pending_drop(),"Drop finishes before next shot")
- game._save_match();game.pocketed_by=[[],[]];game.resume_match()
+ game.campaign.start_tournament(game.rules.names[0]);game.campaign.phase="playing"
+ game.save_slot(0);game.pocketed_by=[[],[]];game.load_slot(0);game.resume_play()
  check(1 in game.pocketed_by[0],"Player ball record survives resume")
- game.rules.ball_in_hand=false;game.sim.place(0,Vector2(-0.9,0.25));game.state="aim"
+ game.rules.player=0;game.rules.ball_in_hand=false;game.sim.place(0,Vector2(-0.9,0.25));game.state="aim"
  var key=InputEventKey.new();key.keycode=KEY_SPACE;key.pressed=true;game._unhandled_input(key)
  check(game.state=="rolling","Space fires deliberate shot at selected power")
  check(FileAccess.get_sha256("res://assets/ui/icon.png")=="14dacd3ae66607d33b73785dedef259263fec49394f54bbe3f2dde685ba187e4","Selected pocket-and-8-ball icon is installed")

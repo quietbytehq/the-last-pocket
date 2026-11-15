@@ -1,9 +1,7 @@
-# Release verification — 0.5.3
+# Release verification — 0.6.0
 
-Linux x86-64, Godot 4.7.2 Compatibility. Native Wayland/OpenGL tested on Mesa Intel RPL-P at1920×1080. The development build averaged59.88 fps in pool,59.99 fps in snooker and59.81 fps in GOAT AI across600/360/360 real rendered frames. These are averages; occasional frames exceed16.67ms and other drivers/hardware need verification.
+All 15 isolated source suites passed (19,585 assertions). Manual-save UI input checks passed 21/21; existing frontend/shooting input checks passed 16/16. These cover explicit saving, overwrite confirmation, pause navigation, exact moving-shot restoration and all 48 rival outcomes. The clean exported game passed 53 runtime checks.
 
-The final8-ball pocket-call case passed25 focused source checks,57 integration checks and6 actual mouse-input checks. The exported game passed41 runtime checks. The eight must be played into a called pocket: numbered pocket markers, a persistent prompt and the shot button now explain this requirement.
+Native Linux x86-64, Godot 4.7.2 Compatibility/Performance, Mesa Intel RPL-P at 1920×1080: pool 59.57 fps, snooker 59.75 fps and GOAT AI 59.26 fps across 600/360/360 rendered frames. These are averages; occasional frames exceed 16.67 ms and other hardware/drivers need verification.
 
-Earlier verification covered deterministic rules, contact accuracy, AI difficulty, campaign progression, saves, audio, pocket boundary safety, rendered drop masks, white cue preview, side HUD collections and animated aiming. The full source suites and clean public export are rerun during release preparation; see RELEASE_VALIDATION.md for final outcomes.
-
-The supported release is Linux x86-64 with OpenGL3.3-capable graphics. ARM, Windows, network multiplayer and tournament-referee certification are not offered. This is an offline game with local two-player and AI play.
+The supported release is Linux x86-64 with OpenGL 3.3-capable graphics. The previous strict Snap software-rendered run passed functional checks but missed the 60 fps assertions under llvmpipe. ARM, Windows and network multiplayer are not included. See RELEASE_VALIDATION.md for scope and limitations.

@@ -8,7 +8,11 @@
     "personality": "Nervous optimist",
     "look": "ginger freckled man, striped orange polo, cue hugged like a lucky charm",
     "portrait": "res://assets/characters/tier_0.png",
-    "voice": "voice_amateur_01"
+    "voice": "voice_amateur_01",
+    "result_win_quote": "My bank-shot insurance finally paid out!",
+    "result_loss_quote": "I'd like to file a claim. Cause of damage: your excellent aim.",
+    "portrait_win": "res://assets/characters/results/tier_0_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_0_loss.png"
   },
   {
     "id": 1,
@@ -19,7 +23,11 @@
     "personality": "Playful trickster",
     "look": "Black woman with curly bob, yellow cardigan, cue balanced over shoulders",
     "portrait": "res://assets/characters/tier_0.png",
-    "voice": "voice_amateur_02"
+    "voice": "voice_amateur_02",
+    "result_win_quote": "Victory first. Snacks immediately after.",
+    "result_loss_quote": "You win the frame. I'm still winning the snack queue.",
+    "portrait_win": "res://assets/characters/results/tier_0_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_0_loss.png"
   },
   {
     "id": 2,
@@ -30,7 +38,11 @@
     "personality": "Overconfident beginner",
     "look": "stocky white man with big quiff, green bowling shirt, theatrically chalking cue",
     "portrait": "res://assets/characters/tier_0.png",
-    "voice": "voice_amateur_03"
+    "voice": "voice_amateur_03",
+    "result_win_quote": "That's not chalk dust. That's the sparkle of success.",
+    "result_loss_quote": "Turns out confidence needs a little more practice.",
+    "portrait_win": "res://assets/characters/results/tier_0_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_0_loss.png"
   },
   {
     "id": 3,
@@ -41,7 +53,11 @@
     "personality": "Shy perfectionist",
     "look": "South Asian woman with glasses and ponytail, pink sports shirt, cue held tightly upright",
     "portrait": "res://assets/characters/tier_0.png",
-    "voice": "voice_amateur_04"
+    "voice": "voice_amateur_04",
+    "result_win_quote": "I calculated that! Well... most of it.",
+    "result_loss_quote": "My experimental safety has produced a very unexpected champion.",
+    "portrait_win": "res://assets/characters/results/tier_0_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_0_loss.png"
   },
   {
     "id": 4,
@@ -52,7 +68,11 @@
     "personality": "Superstitious joker",
     "look": "Latino man with pompadour, red waistcoat, pointing at imaginary lucky eight with cue",
     "portrait": "res://assets/characters/tier_0.png",
-    "voice": "voice_amateur_05"
+    "voice": "voice_amateur_05",
+    "result_win_quote": "Lucky eight. I knew you hadn't forgotten me.",
+    "result_loss_quote": "My lucky number would like to speak to your lucky number.",
+    "portrait_win": "res://assets/characters/results/tier_0_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_0_loss.png"
   },
   {
     "id": 5,
@@ -63,7 +83,11 @@
     "personality": "Cheerful chatterbox",
     "look": "white woman with red ponytail, turquoise blouse, leaning on cue and waving",
     "portrait": "res://assets/characters/tier_0.png",
-    "voice": "voice_amateur_06"
+    "voice": "voice_amateur_06",
+    "result_win_quote": "Trouble and I have become very close friends.",
+    "result_loss_quote": "I've renamed that pocket: Your Fault. Nicely played!",
+    "portrait_win": "res://assets/characters/results/tier_0_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_0_loss.png"
   },
   {
     "id": 6,
@@ -74,7 +98,11 @@
     "personality": "Relaxed improviser",
     "look": "East Asian man with tousled hair, cream sweater, cue tucked behind back",
     "portrait": "res://assets/characters/tier_0.png",
-    "voice": "voice_amateur_07"
+    "voice": "voice_amateur_07",
+    "result_win_quote": "An excellent improvisation, if I say so myself.",
+    "result_loss_quote": "My mistake had great spin. Your finish had better timing.",
+    "portrait_win": "res://assets/characters/results/tier_0_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_0_loss.png"
   },
   {
     "id": 7,
@@ -85,7 +113,11 @@
     "personality": "Competitive twins fan",
     "look": "Black woman with two puff buns, lilac polo, cue horizontal in both hands",
     "portrait": "res://assets/characters/tier_0.png",
-    "voice": "voice_amateur_08"
+    "voice": "voice_amateur_08",
+    "result_win_quote": "My doubles partner agrees: that was brilliant.",
+    "result_loss_quote": "We've held a team meeting. Both of me demand a rematch.",
+    "portrait_win": "res://assets/characters/results/tier_0_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_0_loss.png"
   },
   {
     "id": 8,
@@ -96,7 +128,11 @@
     "personality": "Left-handed showman",
     "look": "Arab man with short curls, blue casual shirt, left-handed cue pose",
     "portrait": "res://assets/characters/tier_0.png",
-    "voice": "voice_amateur_09"
+    "voice": "voice_amateur_09",
+    "result_win_quote": "Left hand, right result. Beautiful.",
+    "result_loss_quote": "I'll blame my other hand. This one knows you played well.",
+    "portrait_win": "res://assets/characters/results/tier_0_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_0_loss.png"
   },
   {
     "id": 9,
@@ -107,7 +143,11 @@
     "personality": "Impatient dancer",
     "look": "Latina woman with braided hair, coral bowling shirt, cue twirled safely beside her",
     "portrait": "res://assets/characters/tier_0.png",
-    "voice": "voice_amateur_10"
+    "voice": "voice_amateur_10",
+    "result_win_quote": "Cue the music. The victory dance is officially on.",
+    "result_loss_quote": "You stole my frame and interrupted my choreography!",
+    "portrait_win": "res://assets/characters/results/tier_0_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_0_loss.png"
   },
   {
     "id": 10,
@@ -118,7 +158,11 @@
     "personality": "Lucky underdog",
     "look": "white blond man with round spectacles, mustard sweater vest, surprised grin and raised cue",
     "portrait": "res://assets/characters/tier_0.png",
-    "voice": "voice_amateur_11"
+    "voice": "voice_amateur_11",
+    "result_win_quote": "Spontaneous genius. Please spell it right on the trophy.",
+    "result_loss_quote": "My luck stepped outside. Your skill stayed at the table.",
+    "portrait_win": "res://assets/characters/results/tier_0_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_0_loss.png"
   },
   {
     "id": 11,
@@ -129,7 +173,11 @@
     "personality": "Streetwise rookie captain",
     "look": "South Asian woman with short black hair, crimson jacket, cue across one shoulder",
     "portrait": "res://assets/characters/tier_0.png",
-    "voice": "voice_amateur_12"
+    "voice": "voice_amateur_12",
+    "result_win_quote": "The pockets have approved my management style.",
+    "result_loss_quote": "Looks like the club has a new manager. Good frame.",
+    "portrait_win": "res://assets/characters/results/tier_0_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_0_loss.png"
   },
   {
     "id": 12,
@@ -140,7 +188,11 @@
     "personality": "Suave technician",
     "look": "Black man with neat beard, teal waistcoat and tie, inspecting elegant cue",
     "portrait": "res://assets/characters/tier_1.png",
-    "voice": "voice_professional_01"
+    "voice": "voice_professional_01",
+    "result_win_quote": "A polished plan deserves a polished finish.",
+    "result_loss_quote": "You put a dent in my composure. Very stylishly done.",
+    "portrait_win": "res://assets/characters/results/tier_1_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_1_loss.png"
   },
   {
     "id": 13,
@@ -151,7 +203,11 @@
     "personality": "Precise strategist",
     "look": "white woman with dark bob, navy vest, cue diagonally like a ruler",
     "portrait": "res://assets/characters/tier_1.png",
-    "voice": "voice_professional_02"
+    "voice": "voice_professional_02",
+    "result_win_quote": "The perfect angle. The perfectly predictable result.",
+    "result_loss_quote": "You found the one corner I hadn't accounted for.",
+    "portrait_win": "res://assets/characters/results/tier_1_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_1_loss.png"
   },
   {
     "id": 14,
@@ -162,7 +218,11 @@
     "personality": "Fast attacking player",
     "look": "Latino man with slicked hair, burgundy shirt, cue ready at hip",
     "portrait": "res://assets/characters/tier_1.png",
-    "voice": "voice_professional_03"
+    "voice": "voice_professional_03",
+    "result_win_quote": "Did you blink? No? Good, I want witnesses.",
+    "result_loss_quote": "You stopped Mercury in its tracks. That's a quick lesson.",
+    "portrait_win": "res://assets/characters/results/tier_1_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_1_loss.png"
   },
   {
     "id": 15,
@@ -173,7 +233,11 @@
     "personality": "Cool defender",
     "look": "Black woman with long braids, ice-blue suit vest, cue upright and cool smile",
     "portrait": "res://assets/characters/tier_1.png",
-    "voice": "voice_professional_04"
+    "voice": "voice_professional_04",
+    "result_win_quote": "Still unbothered. Just slightly more victorious.",
+    "result_loss_quote": "A small crack in the ice. You earned that one.",
+    "portrait_win": "res://assets/characters/results/tier_1_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_1_loss.png"
   },
   {
     "id": 16,
@@ -184,7 +248,11 @@
     "personality": "Position-play specialist",
     "look": "South Asian man with trimmed moustache, bronze vest, pointing cue toward an imaginary route",
     "portrait": "res://assets/characters/tier_1.png",
-    "voice": "voice_professional_05"
+    "voice": "voice_professional_05",
+    "result_win_quote": "The white ball arrived exactly on schedule.",
+    "result_loss_quote": "My itinerary has been cancelled. Your route was better.",
+    "portrait_win": "res://assets/characters/results/tier_1_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_1_loss.png"
   },
   {
     "id": 17,
@@ -195,7 +263,11 @@
     "personality": "Distance specialist",
     "look": "East Asian woman with sleek ponytail, ivory jacket, long cue balanced in one hand",
     "portrait": "res://assets/characters/tier_1.png",
-    "voice": "voice_professional_06"
+    "voice": "voice_professional_06",
+    "result_win_quote": "Distance makes the victory look even sweeter.",
+    "result_loss_quote": "Long shot, short explanation: you played beautifully.",
+    "portrait_win": "res://assets/characters/results/tier_1_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_1_loss.png"
   },
   {
     "id": 18,
@@ -206,7 +278,11 @@
     "personality": "Charming hustler",
     "look": "white man with swept brown hair, bottle-green waistcoat, cue across chest",
     "portrait": "res://assets/characters/tier_1.png",
-    "voice": "voice_professional_07"
+    "voice": "voice_professional_07",
+    "result_win_quote": "That advice will be available after the rematch.",
+    "result_loss_quote": "I appear to have talked myself out of a victory.",
+    "portrait_win": "res://assets/characters/results/tier_1_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_1_loss.png"
   },
   {
     "id": 19,
@@ -217,7 +293,11 @@
     "personality": "Methodical planner",
     "look": "South Asian woman with bob and spectacles, charcoal vest, thoughtfully chalking cue",
     "portrait": "res://assets/characters/tier_1.png",
-    "voice": "voice_professional_08"
+    "voice": "voice_professional_08",
+    "result_win_quote": "The calculations were correct. I do enjoy that feeling.",
+    "result_loss_quote": "One variable escaped me. It was you.",
+    "portrait_win": "res://assets/characters/results/tier_1_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_1_loss.png"
   },
   {
     "id": 20,
@@ -228,7 +308,11 @@
     "personality": "Gentle touch expert",
     "look": "Arab man with wavy hair, plum waistcoat, elegant cue held lightly",
     "portrait": "res://assets/characters/tier_1.png",
-    "voice": "voice_professional_09"
+    "voice": "voice_professional_09",
+    "result_win_quote": "A gentle touch. A rather firm result.",
+    "result_loss_quote": "Your finish was lovely. My ego will need a softer cushion.",
+    "portrait_win": "res://assets/characters/results/tier_1_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_1_loss.png"
   },
   {
     "id": 21,
@@ -239,7 +323,11 @@
     "personality": "Combination expert",
     "look": "East Asian woman with cropped hair, jade club jacket, cue resting on shoulder",
     "portrait": "res://assets/characters/tier_1.png",
-    "voice": "voice_professional_10"
+    "voice": "voice_professional_10",
+    "result_win_quote": "A perfect connection. Right through to the next round.",
+    "result_loss_quote": "You changed the route. I rather admire the engineering.",
+    "portrait_win": "res://assets/characters/results/tier_1_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_1_loss.png"
   },
   {
     "id": 22,
@@ -250,7 +338,11 @@
     "personality": "Power breaker",
     "look": "broad Black man with shaved head, rolled white sleeves and red suspenders, substantial cue on shoulder",
     "portrait": "res://assets/characters/tier_1.png",
-    "voice": "voice_professional_11"
+    "voice": "voice_professional_11",
+    "result_win_quote": "The rack survived. Your chances were less fortunate.",
+    "result_loss_quote": "I brought the thunder. You brought the finishing touch.",
+    "portrait_win": "res://assets/characters/results/tier_1_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_1_loss.png"
   },
   {
     "id": 23,
@@ -261,7 +353,11 @@
     "personality": "Professional captain",
     "look": "white woman with silver-streaked dark hair, teal velvet jacket, cue planted with assured grin",
     "portrait": "res://assets/characters/tier_1.png",
-    "voice": "voice_professional_12"
+    "voice": "voice_professional_12",
+    "result_win_quote": "Professional courtesy: I made the lesson look elegant.",
+    "result_loss_quote": "Mind the step? You've just walked straight past me.",
+    "portrait_win": "res://assets/characters/results/tier_1_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_1_loss.png"
   },
   {
     "id": 24,
@@ -272,7 +368,11 @@
     "personality": "Analytical physicist",
     "look": "older South Asian man with silver hair and round glasses, burgundy waistcoat, cue used like a pointer",
     "portrait": "res://assets/characters/tier_2.png",
-    "voice": "voice_master_01"
+    "voice": "voice_master_01",
+    "result_win_quote": "A convincing experiment. The result supports my theory.",
+    "result_loss_quote": "Excellent evidence. I shall be revising my entire hypothesis.",
+    "portrait_win": "res://assets/characters/results/tier_2_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_2_loss.png"
   },
   {
     "id": 25,
@@ -283,7 +383,11 @@
     "personality": "Elegant positional master",
     "look": "Latina woman with dark waves, black and gold tailored suit, cue held gracefully behind shoulder",
     "portrait": "res://assets/characters/tier_2.png",
-    "voice": "voice_master_02"
+    "voice": "voice_master_02",
+    "result_win_quote": "A silk-smooth finish. No wrinkles anywhere.",
+    "result_loss_quote": "You found the loose thread. Beautifully played.",
+    "portrait_win": "res://assets/characters/results/tier_2_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_2_loss.png"
   },
   {
     "id": 26,
@@ -294,7 +398,11 @@
     "personality": "Spin artist",
     "look": "Black man with neat locs, purple velvet waistcoat, cue diagonally in relaxed one-handed pose",
     "portrait": "res://assets/characters/tier_2.png",
-    "voice": "voice_master_03"
+    "voice": "voice_master_03",
+    "result_win_quote": "A little spin, a little art, a very nice score.",
+    "result_loss_quote": "My masterpiece has been politely corrected by your cue.",
+    "portrait_win": "res://assets/characters/results/tier_2_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_2_loss.png"
   },
   {
     "id": 27,
@@ -305,7 +413,11 @@
     "personality": "Deceptive safety artist",
     "look": "East Asian woman with blunt bob, wine-red silk shirt and vest, cue partly hidden behind back",
     "portrait": "res://assets/characters/tier_2.png",
-    "voice": "voice_master_04"
+    "voice": "voice_master_04",
+    "result_win_quote": "The opening was an illusion. The victory is quite real.",
+    "result_loss_quote": "You saw through the trick. I didn't see that finish coming.",
+    "portrait_win": "res://assets/characters/results/tier_2_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_2_loss.png"
   },
   {
     "id": 28,
@@ -316,7 +428,11 @@
     "personality": "Patient veteran",
     "look": "older white man with silver moustache, tweed burgundy waistcoat, leaning confidently on cue",
     "portrait": "res://assets/characters/tier_2.png",
-    "voice": "voice_master_05"
+    "voice": "voice_master_05",
+    "result_win_quote": "Another route added to the atlas.",
+    "result_loss_quote": "A new route! After all these years, you still surprised me.",
+    "portrait_win": "res://assets/characters/results/tier_2_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_2_loss.png"
   },
   {
     "id": 29,
@@ -327,7 +443,11 @@
     "personality": "Confident all-rounder",
     "look": "Arab woman with elegant dark braid, ivory blazer and gold details, cue horizontal at waist",
     "portrait": "res://assets/characters/tier_2.png",
-    "voice": "voice_master_06"
+    "voice": "voice_master_06",
+    "result_win_quote": "The audience got its best shot after all.",
+    "result_loss_quote": "That deserved applause. Allow me to start.",
+    "portrait_win": "res://assets/characters/results/tier_2_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_2_loss.png"
   },
   {
     "id": 30,
@@ -338,7 +458,11 @@
     "personality": "Tactical puzzle maker",
     "look": "Latino man with curly beard, dark green jacket, cue angled and finger at chin",
     "portrait": "res://assets/characters/tier_2.png",
-    "voice": "voice_master_07"
+    "voice": "voice_master_07",
+    "result_win_quote": "The final piece fits. Shall I explain the solution?",
+    "result_loss_quote": "Your solution was annoyingly elegant. I approve.",
+    "portrait_win": "res://assets/characters/results/tier_2_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_2_loss.png"
   },
   {
     "id": 31,
@@ -349,7 +473,11 @@
     "personality": "Unflappable closer",
     "look": "Black woman with short silver curls, midnight-purple jacket, cue resting on crossed arms",
     "portrait": "res://assets/characters/tier_2.png",
-    "voice": "voice_master_08"
+    "voice": "voice_master_08",
+    "result_win_quote": "Low lights. High standards. Clean finish.",
+    "result_loss_quote": "You kept your nerve when the lights got low. Respect.",
+    "portrait_win": "res://assets/characters/results/tier_2_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_2_loss.png"
   },
   {
     "id": 32,
@@ -360,7 +488,11 @@
     "personality": "Relentless attacker",
     "look": "East Asian man with swept black hair, maroon mandarin vest, cue ready in sharp pose",
     "portrait": "res://assets/characters/tier_2.png",
-    "voice": "voice_master_09"
+    "voice": "voice_master_09",
+    "result_win_quote": "Energy conserved. Victory secured.",
+    "result_loss_quote": "You redirected all that energy straight into a win.",
+    "portrait_win": "res://assets/characters/results/tier_2_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_2_loss.png"
   },
   {
     "id": 33,
@@ -371,7 +503,11 @@
     "personality": "Comeback specialist",
     "look": "white woman with auburn waves, copper waistcoat, cue over shoulder and teasing wink",
     "portrait": "res://assets/characters/tier_2.png",
-    "voice": "voice_master_10"
+    "voice": "voice_master_10",
+    "result_win_quote": "A little pressure. A very warm comeback.",
+    "result_loss_quote": "You put out the comeback before it caught fire. Well played.",
+    "portrait_win": "res://assets/characters/results/tier_2_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_2_loss.png"
   },
   {
     "id": 34,
@@ -382,7 +518,11 @@
     "personality": "Defensive fortress",
     "look": "Black man with salt-and-pepper beard, oxblood jacket, cue held vertically like a staff",
     "portrait": "res://assets/characters/tier_2.png",
-    "voice": "voice_master_11"
+    "voice": "voice_master_11",
+    "result_win_quote": "The castle stands. The gate remains closed.",
+    "result_loss_quote": "You found the gate. I may have to build another wall.",
+    "portrait_win": "res://assets/characters/results/tier_2_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_2_loss.png"
   },
   {
     "id": 35,
@@ -393,7 +533,11 @@
     "personality": "Master tier champion",
     "look": "South Asian woman with long dark waves, burgundy velvet suit, fine cue held with a regal bow",
     "portrait": "res://assets/characters/tier_2.png",
-    "voice": "voice_master_12"
+    "voice": "voice_master_12",
+    "result_win_quote": "A masterclass, with a complimentary final flourish.",
+    "result_loss_quote": "Consider that your graduation. The next club is waiting.",
+    "portrait_win": "res://assets/characters/results/tier_2_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_2_loss.png"
   },
   {
     "id": 36,
@@ -404,7 +548,11 @@
     "personality": "Flamboyant legend",
     "look": "Black man with sculpted curls, black suit with gold lapels, ornate cue behind shoulders",
     "portrait": "res://assets/characters/tier_3.png",
-    "voice": "voice_goat_01"
+    "voice": "voice_goat_01",
+    "result_win_quote": "A brilliant finale. Naturally, I had a part in it.",
+    "result_loss_quote": "You stole the spotlight. I suppose I can applaud from here.",
+    "portrait_win": "res://assets/characters/results/tier_3_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_3_loss.png"
   },
   {
     "id": 37,
@@ -415,7 +563,11 @@
     "personality": "Fearless finisher",
     "look": "Latina woman with dramatic dark waves, royal-blue suit with gold trim, cue leaning across hip",
     "portrait": "res://assets/characters/tier_3.png",
-    "voice": "voice_goat_02"
+    "voice": "voice_goat_02",
+    "result_win_quote": "One promise kept. One beautifully closed frame.",
+    "result_loss_quote": "I promised a difficult finish. You made yours look easy.",
+    "portrait_win": "res://assets/characters/results/tier_3_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_3_loss.png"
   },
   {
     "id": 38,
@@ -426,7 +578,11 @@
     "personality": "Ancient strategist",
     "look": "older white man with silver hair and beard, midnight tuxedo, ebony cue upright",
     "portrait": "res://assets/characters/tier_3.png",
-    "voice": "voice_goat_03"
+    "voice": "voice_goat_03",
+    "result_win_quote": "That angle has served me well for many years.",
+    "result_loss_quote": "A new angle at my age. What an excellent surprise.",
+    "portrait_win": "res://assets/characters/results/tier_3_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_3_loss.png"
   },
   {
     "id": 39,
@@ -437,7 +593,11 @@
     "personality": "Radiant champion",
     "look": "South Asian woman with gold earrings and long braid, sapphire jacket, black cue across shoulder",
     "portrait": "res://assets/characters/tier_3.png",
-    "voice": "voice_goat_04"
+    "voice": "voice_goat_04",
+    "result_win_quote": "A little radiance, a very bright result.",
+    "result_loss_quote": "The spotlight is yours tonight. Enjoy every second.",
+    "portrait_win": "res://assets/characters/results/tier_3_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_3_loss.png"
   },
   {
     "id": 40,
@@ -448,7 +608,11 @@
     "personality": "Ice-cold shot maker",
     "look": "Arab man with dark slicked hair and neat beard, black and gold waistcoat, ornate cue inspected closely",
     "portrait": "res://assets/characters/tier_3.png",
-    "voice": "voice_goat_05"
+    "voice": "voice_goat_05",
+    "result_win_quote": "My reservation was honoured. Excellent service.",
+    "result_loss_quote": "My reservation was cancelled. Apparently, you booked the whole table.",
+    "portrait_win": "res://assets/characters/results/tier_3_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_3_loss.png"
   },
   {
     "id": 41,
@@ -459,7 +623,11 @@
     "personality": "Lightning runner",
     "look": "white woman with platinum pixie cut, blue and ivory tuxedo, cue angled dynamically",
     "portrait": "res://assets/characters/tier_3.png",
-    "voice": "voice_goat_06"
+    "voice": "voice_goat_06",
+    "result_win_quote": "A quick finish. Plenty of time to enjoy it.",
+    "result_loss_quote": "You caught the blitz. I wasn't expecting a traffic stop.",
+    "portrait_win": "res://assets/characters/results/tier_3_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_3_loss.png"
   },
   {
     "id": 42,
@@ -470,7 +638,11 @@
     "personality": "Ghostly safety legend",
     "look": "Latino man with silver curls, ink-blue velvet suit, cue tucked behind back with knowing smile",
     "portrait": "res://assets/characters/tier_3.png",
-    "voice": "voice_goat_07"
+    "voice": "voice_goat_07",
+    "result_win_quote": "The scoreboard has solved the mystery.",
+    "result_loss_quote": "You've seen through the ghost. I may have to learn a new haunting.",
+    "portrait_win": "res://assets/characters/results/tier_3_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_3_loss.png"
   },
   {
     "id": 43,
@@ -481,7 +653,11 @@
     "personality": "Perfect-rhythm legend",
     "look": "East Asian woman with long black hair, royal-blue tailored vest, cue poised in both hands",
     "portrait": "res://assets/characters/tier_3.png",
-    "voice": "voice_goat_08"
+    "voice": "voice_goat_08",
+    "result_win_quote": "A calm cue. A perfectly timed finish.",
+    "result_loss_quote": "You changed the rhythm and kept your balance. Exquisite.",
+    "portrait_win": "res://assets/characters/results/tier_3_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_3_loss.png"
   },
   {
     "id": 44,
@@ -492,7 +668,11 @@
     "personality": "Pressure specialist",
     "look": "Black man with shaved head and silver goatee, black jacket and diamond cufflinks, gold-inlaid cue at shoulder",
     "portrait": "res://assets/characters/tier_3.png",
-    "voice": "voice_goat_09"
+    "voice": "voice_goat_09",
+    "result_win_quote": "Pressure creates diamonds. Mine appear to be sparkling.",
+    "result_loss_quote": "That's a finish made under pressure. Keep the diamond.",
+    "portrait_win": "res://assets/characters/results/tier_3_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_3_loss.png"
   },
   {
     "id": 45,
@@ -503,7 +683,11 @@
     "personality": "Charismatic celebrity",
     "look": "older white woman with elegant grey waves, sapphire suit and silk scarf, cue held like a red-carpet prop",
     "portrait": "res://assets/characters/tier_3.png",
-    "voice": "voice_goat_10"
+    "voice": "voice_goat_10",
+    "result_win_quote": "Darling, the fans do appreciate a proper finale.",
+    "result_loss_quote": "The fans want your autograph now. I can't even blame them.",
+    "portrait_win": "res://assets/characters/results/tier_3_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_3_loss.png"
   },
   {
     "id": 46,
@@ -514,7 +698,11 @@
     "personality": "Dominant breaker",
     "look": "broad South Asian man with dark wavy hair, black suit and gold shirt, powerful cue held across chest",
     "portrait": "res://assets/characters/tier_3.png",
-    "voice": "voice_goat_11"
+    "voice": "voice_goat_11",
+    "result_win_quote": "Thunder rolls. Another frame follows.",
+    "result_loss_quote": "You weathered the storm. That was a champion's finish.",
+    "portrait_win": "res://assets/characters/results/tier_3_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_3_loss.png"
   },
   {
     "id": 47,
@@ -525,6 +713,10 @@
     "personality": "Ultimate composed rival",
     "look": "handsome older mixed-heritage man with silver temples, immaculate midnight-blue tuxedo, elaborate gold-inlaid ebony cue upright and quiet confident smile",
     "portrait": "res://assets/characters/tier_3.png",
-    "voice": "voice_goat_12"
+    "voice": "voice_goat_12",
+    "result_win_quote": "The final lesson? There is always another angle.",
+    "result_loss_quote": "Forty-eight rivals. One champion. You've earned that name.",
+    "portrait_win": "res://assets/characters/results/tier_3_win.png",
+    "portrait_loss": "res://assets/characters/results/tier_3_loss.png"
   }
 ]

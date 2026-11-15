@@ -36,7 +36,7 @@ func run():
  var effects=game.sound_enabled;click(game.ui.sound_button);await frames(2);check(game.sound_enabled!=effects,"Effects tile has an independent toggle")
  click(game.ui.journey_button);await frames(3);check(game.state=="journey","Pause offers the current journey")
  key(KEY_ESCAPE);await frames(3);check(game.state=="paused","Journey returns to Pause without resuming AI")
- click(button(game.ui.settings,"Resume"));await frames(3);check(game.state=="aim","Wooden Resume tile resumes play")
+ click(button(game.ui.settings,"Resume play"));await frames(3);check(game.state=="aim","Wooden Resume tile resumes play")
  game.sim.place(0,Vector2(-0.85,0.1));game.rules.ball_in_hand=false;game.rules.player=0
  var target=game.table.camera.unproject_position(Vector3(-0.2,game.table.BED+game.sim.radius,0.1))
  for pressed in [true,false]:

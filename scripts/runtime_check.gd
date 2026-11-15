@@ -40,6 +40,15 @@ func run():
  check(game.music_player.stream!=null and game.music_player.stream.get_length()>60,"Supplied lobby music is embedded and decodes")
  check(game.ui.ai_page.find_children("*","OptionButton",true,false).is_empty(),"AI entry has no skill or opponent selectors")
  check(game.campaign.roster.size()==48,"All 48 rivals are embedded")
+ check(game.list_save_slots().size()==10,"Exactly ten manual tournament slots are available")
+ check(game.ui.slot_buttons.size()==10,"Separate save menu has ten slot controls")
+ check(game.ui.settings.get_node("ResumePlay")!=null,"Pause includes explicit Resume play control")
+ var result_lines={}
+ for rival in game.campaign.roster:
+  for outcome in ["win","loss"]:result_lines[rival.get("result_"+outcome+"_quote","")]=true
+ check(result_lines.size()==96 and not result_lines.has(""),"All 96 individual result lines are embedded")
+ for tier in range(4):
+  for outcome in ["win","loss"]:check(ResourceLoader.exists("res://assets/characters/results/tier_%d_%s.png" % [tier,outcome]),"Rival outcome atlas %d %s is embedded" % [tier,outcome])
  check(ResourceLoader.exists("res://assets/characters/title_hero.png"),"Comic title hero is embedded")
  for tier in range(4):check(ResourceLoader.exists("res://assets/characters/tier_%d.png" % tier),"Rival portrait atlas %d is embedded" % tier)
  for tier in range(1,4):check(ResourceLoader.exists("res://assets/table/tier_%d.png" % tier),"Upgraded table %d is embedded" % tier)

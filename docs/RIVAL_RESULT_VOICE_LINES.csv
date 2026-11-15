@@ -1,0 +1,97 @@
+rival,outcome,filename,exact_line
+Benny Banks,win,voice_amateur_01_win.mp3,My bank-shot insurance finally paid out!
+Benny Banks,loss,voice_amateur_01_loss.mp3,I'd like to file a claim. Cause of damage: your excellent aim.
+Mia Mischief,win,voice_amateur_02_win.mp3,Victory first. Snacks immediately after.
+Mia Mischief,loss,voice_amateur_02_loss.mp3,You win the frame. I'm still winning the snack queue.
+Chip Chalkley,win,voice_amateur_03_win.mp3,That's not chalk dust. That's the sparkle of success.
+Chip Chalkley,loss,voice_amateur_03_loss.mp3,Turns out confidence needs a little more practice.
+Nina Nerves,win,voice_amateur_04_win.mp3,I calculated that! Well... most of it.
+Nina Nerves,loss,voice_amateur_04_loss.mp3,My experimental safety has produced a very unexpected champion.
+Eddie Eight,win,voice_amateur_05_win.mp3,Lucky eight. I knew you hadn't forgotten me.
+Eddie Eight,loss,voice_amateur_05_loss.mp3,My lucky number would like to speak to your lucky number.
+Poppy Pocket,win,voice_amateur_06_win.mp3,Trouble and I have become very close friends.
+Poppy Pocket,loss,voice_amateur_06_loss.mp3,I've renamed that pocket: Your Fault. Nicely played!
+Sam Sidekick,win,voice_amateur_07_win.mp3,"An excellent improvisation, if I say so myself."
+Sam Sidekick,loss,voice_amateur_07_loss.mp3,My mistake had great spin. Your finish had better timing.
+Daisy Doubles,win,voice_amateur_08_win.mp3,My doubles partner agrees: that was brilliant.
+Daisy Doubles,loss,voice_amateur_08_loss.mp3,We've held a team meeting. Both of me demand a rematch.
+Lou Lefty,win,voice_amateur_09_win.mp3,"Left hand, right result. Beautiful."
+Lou Lefty,loss,voice_amateur_09_loss.mp3,I'll blame my other hand. This one knows you played well.
+Tessa Tempo,win,voice_amateur_10_win.mp3,Cue the music. The victory dance is officially on.
+Tessa Tempo,loss,voice_amateur_10_loss.mp3,You stole my frame and interrupted my choreography!
+Freddie Fluke,win,voice_amateur_11_win.mp3,Spontaneous genius. Please spell it right on the trophy.
+Freddie Fluke,loss,voice_amateur_11_loss.mp3,My luck stepped outside. Your skill stayed at the table.
+Ruby Rails,win,voice_amateur_12_win.mp3,The pockets have approved my management style.
+Ruby Rails,loss,voice_amateur_12_loss.mp3,Looks like the club has a new manager. Good frame.
+Victor Velvet,win,voice_professional_01_win.mp3,A polished plan deserves a polished finish.
+Victor Velvet,loss,voice_professional_01_loss.mp3,You put a dent in my composure. Very stylishly done.
+Clara Cutshot,win,voice_professional_02_win.mp3,The perfect angle. The perfectly predictable result.
+Clara Cutshot,loss,voice_professional_02_loss.mp3,You found the one corner I hadn't accounted for.
+Marco Mercury,win,voice_professional_03_win.mp3,"Did you blink? No? Good, I want witnesses."
+Marco Mercury,loss,voice_professional_03_loss.mp3,You stopped Mercury in its tracks. That's a quick lesson.
+Imani Ice,win,voice_professional_04_win.mp3,Still unbothered. Just slightly more victorious.
+Imani Ice,loss,voice_professional_04_loss.mp3,A small crack in the ice. You earned that one.
+Oscar Orbit,win,voice_professional_05_win.mp3,The white ball arrived exactly on schedule.
+Oscar Orbit,loss,voice_professional_05_loss.mp3,My itinerary has been cancelled. Your route was better.
+Lena Longshot,win,voice_professional_06_win.mp3,Distance makes the victory look even sweeter.
+Lena Longshot,loss,voice_professional_06_loss.mp3,"Long shot, short explanation: you played beautifully."
+Hugo Hustle,win,voice_professional_07_win.mp3,That advice will be available after the rematch.
+Hugo Hustle,loss,voice_professional_07_loss.mp3,I appear to have talked myself out of a victory.
+Priya Precision,win,voice_professional_08_win.mp3,The calculations were correct. I do enjoy that feeling.
+Priya Precision,loss,voice_professional_08_loss.mp3,One variable escaped me. It was you.
+Felix Finesse,win,voice_professional_09_win.mp3,A gentle touch. A rather firm result.
+Felix Finesse,loss,voice_professional_09_loss.mp3,Your finish was lovely. My ego will need a softer cushion.
+Jade Junction,win,voice_professional_10_win.mp3,A perfect connection. Right through to the next round.
+Jade Junction,loss,voice_professional_10_loss.mp3,You changed the route. I rather admire the engineering.
+Bruno Breaker,win,voice_professional_11_win.mp3,The rack survived. Your chances were less fortunate.
+Bruno Breaker,loss,voice_professional_11_loss.mp3,I brought the thunder. You brought the finishing touch.
+Vivian Vice,win,voice_professional_12_win.mp3,Professional courtesy: I made the lesson look elegant.
+Vivian Vice,loss,voice_professional_12_loss.mp3,Mind the step? You've just walked straight past me.
+Dr. Angle,win,voice_master_01_win.mp3,A convincing experiment. The result supports my theory.
+Dr. Angle,loss,voice_master_01_loss.mp3,Excellent evidence. I shall be revising my entire hypothesis.
+Sofia Silk,win,voice_master_02_win.mp3,A silk-smooth finish. No wrinkles anywhere.
+Sofia Silk,loss,voice_master_02_loss.mp3,You found the loose thread. Beautifully played.
+Dante Drift,win,voice_master_03_win.mp3,"A little spin, a little art, a very nice score."
+Dante Drift,loss,voice_master_03_loss.mp3,My masterpiece has been politely corrected by your cue.
+Mei Mirage,win,voice_master_04_win.mp3,The opening was an illusion. The victory is quite real.
+Mei Mirage,loss,voice_master_04_loss.mp3,You saw through the trick. I didn't see that finish coming.
+Arthur Atlas,win,voice_master_05_win.mp3,Another route added to the atlas.
+Arthur Atlas,loss,voice_master_05_loss.mp3,"A new route! After all these years, you still surprised me."
+Zara Zenith,win,voice_master_06_win.mp3,The audience got its best shot after all.
+Zara Zenith,loss,voice_master_06_loss.mp3,That deserved applause. Allow me to start.
+Rafael Riddle,win,voice_master_07_win.mp3,The final piece fits. Shall I explain the solution?
+Rafael Riddle,loss,voice_master_07_loss.mp3,Your solution was annoyingly elegant. I approve.
+Nadia Nightfall,win,voice_master_08_win.mp3,Low lights. High standards. Clean finish.
+Nadia Nightfall,loss,voice_master_08_loss.mp3,You kept your nerve when the lights got low. Respect.
+Kenji Kinetic,win,voice_master_09_win.mp3,Energy conserved. Victory secured.
+Kenji Kinetic,loss,voice_master_09_loss.mp3,You redirected all that energy straight into a win.
+Elena Ember,win,voice_master_10_win.mp3,A little pressure. A very warm comeback.
+Elena Ember,loss,voice_master_10_loss.mp3,You put out the comeback before it caught fire. Well played.
+Malik Monarch,win,voice_master_11_win.mp3,The castle stands. The gate remains closed.
+Malik Monarch,loss,voice_master_11_loss.mp3,You found the gate. I may have to build another wall.
+Celeste Crown,win,voice_master_12_win.mp3,"A masterclass, with a complimentary final flourish."
+Celeste Crown,loss,voice_master_12_loss.mp3,Consider that your graduation. The next club is waiting.
+Cassius Comet,win,voice_goat_01_win.mp3,"A brilliant finale. Naturally, I had a part in it."
+Cassius Comet,loss,voice_goat_01_loss.mp3,You stole the spotlight. I suppose I can applaud from here.
+Valentina Vow,win,voice_goat_02_win.mp3,One promise kept. One beautifully closed frame.
+Valentina Vow,loss,voice_goat_02_loss.mp3,I promised a difficult finish. You made yours look easy.
+Magnus Marble,win,voice_goat_03_win.mp3,That angle has served me well for many years.
+Magnus Marble,loss,voice_goat_03_loss.mp3,A new angle at my age. What an excellent surprise.
+Asha Aurora,win,voice_goat_04_win.mp3,"A little radiance, a very bright result."
+Asha Aurora,loss,voice_goat_04_loss.mp3,The spotlight is yours tonight. Enjoy every second.
+Orion Onyx,win,voice_goat_05_win.mp3,My reservation was honoured. Excellent service.
+Orion Onyx,loss,voice_goat_05_loss.mp3,"My reservation was cancelled. Apparently, you booked the whole table."
+Bianca Blitz,win,voice_goat_06_win.mp3,A quick finish. Plenty of time to enjoy it.
+Bianca Blitz,loss,voice_goat_06_loss.mp3,You caught the blitz. I wasn't expecting a traffic stop.
+Sol Spectre,win,voice_goat_07_win.mp3,The scoreboard has solved the mystery.
+Sol Spectre,loss,voice_goat_07_loss.mp3,You've seen through the ghost. I may have to learn a new haunting.
+Yuki Royal,win,voice_goat_08_win.mp3,A calm cue. A perfectly timed finish.
+Yuki Royal,loss,voice_goat_08_loss.mp3,You changed the rhythm and kept your balance. Exquisite.
+Darius Diamond,win,voice_goat_09_win.mp3,Pressure creates diamonds. Mine appear to be sparkling.
+Darius Diamond,loss,voice_goat_09_loss.mp3,That's a finish made under pressure. Keep the diamond.
+Isadora Icon,win,voice_goat_10_win.mp3,"Darling, the fans do appreciate a proper finale."
+Isadora Icon,loss,voice_goat_10_loss.mp3,The fans want your autograph now. I can't even blame them.
+Theo Thunder,win,voice_goat_11_win.mp3,Thunder rolls. Another frame follows.
+Theo Thunder,loss,voice_goat_11_loss.mp3,You weathered the storm. That was a champion's finish.
+The Final Frame,win,voice_goat_12_win.mp3,The final lesson? There is always another angle.
+The Final Frame,loss,voice_goat_12_loss.mp3,Forty-eight rivals. One champion. You've earned that name.

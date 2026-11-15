@@ -4,17 +4,17 @@ A Linux cue-sports game with local two-player matches, AI rivals and a 48-frame 
 
 ![Actual Linux title screen](docs/title-screen.png)
 
-[Gameplay preview](docs/current-build.png) · [Rival introduction](docs/rival-card.png)
+[Gameplay preview](docs/current-build.png) · [Rival introduction](docs/rival-card.png) · [Manual saves](docs/manual-save-slots.png) · [Rival result](docs/rival-result.png)
 
 ## Play
 
 Download the Linux archive from [GitHub Releases](https://github.com/quietbytehq/the-last-pocket/releases), extract it, then run `TheLastPocket/play.sh`. Godot is not required to play the exported build. The launcher selects native Wayland on Wayland desktops and otherwise uses the normal Linux display driver.
 
-The game starts fullscreen with an illustrated title screen. Press any key, then choose **Local Versus** or **Versus AI**. Local Versus offers ten modes. Versus AI is the championship: new runs always start in Amateur, and rivals are revealed one at a time. For a local match, choose a game, enter two names and select **Play Match**. In Local Versus, both players share the mouse and keyboard. In Versus AI, you are player one. **Resume Last Saved Match** restores the latest settled position. If you quit during a shot, the previous saved position remains available.
+The game starts fullscreen with an illustrated title screen. Press any key, then choose **Local Versus** or **Versus AI**. Local Versus offers ten modes. Versus AI is the championship: new runs always start in Amateur, and rivals are revealed one at a time. For a local match, choose a game, enter two names and select **Play Match**. In Local Versus, both players share the mouse and keyboard. In Versus AI, you are player one. Tournament progress is saved only when you choose **Save tournament**. The separate save menu has ten slots with the player name and local date/time. Use **Load tournament** to open a chosen save; active frames load paused until you choose **Resume play**. There is no automatic progress saving.
 
 ## Championship
 
-Four ranks — Amateur, Professional, Master and GOAT — each introduce twelve original comic-style opponents. Win frames to unlock upgraded tables and cues. Three continue diamonds allow rematches after a loss. Your journey shows only current and encountered rivals; future opponents stay hidden. The local top ten keep each player’s best tournament run. See [TOURNAMENT.md](TOURNAMENT.md) for scoring, progression and AI behaviour.
+Four ranks — Amateur, Professional, Master and GOAT — each introduce twelve original comic-style opponents. Win frames to unlock upgraded tables and cues. Three retry diamonds allow rematches after a loss. Your journey shows only current and encountered rivals; future opponents stay hidden. Each rival has separate victory and defeat portraits and an individual line for each result. These lines are readable on screen; recorded voices are optional. The local top ten keep each player’s best tournament run. See [TOURNAMENT.md](TOURNAMENT.md) for scoring, progression and AI behaviour.
 
 ## Games
 
@@ -86,9 +86,9 @@ The exported game has its own compiled smoke test (release executables do not ac
 ./build/TheLastPocket/play.sh --audio-driver Dummy -- --self-test
 ```
 
-For development tests, use an isolated `XDG_DATA_HOME` to avoid replacing a player's saved match. `tools/build-linux.sh` exports and packages the Linux game using installed matching Godot export templates.
+For development tests, use an isolated `XDG_DATA_HOME` to keep test files separate from player data. `tools/build-linux.sh` exports and packages the Linux game using installed matching Godot export templates.
 
-The game runs offline. It has no accounts, networking, telemetry or in-app purchases. AI planning runs locally on a background thread. Player names, preferences and the most recent settled match are stored locally in Godot's `user://` directory.
+The game runs offline. It has no accounts, networking, telemetry or in-app purchases. AI planning runs locally on a background thread. Preferences, the local Top Ten and explicitly selected tournament saves are stored in Godot's `user://` directory. Unselected tournament progress is never saved. Legacy automatic match saves are ignored and left untouched.
 
 ## Licence and contact
 

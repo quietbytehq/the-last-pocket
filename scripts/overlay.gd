@@ -15,8 +15,16 @@ var front_music: Button
 var front_effects: Button
 var press_hint: Label
 var ai_name: LineEdit
-var resume_tour: Button
-var inspect_tour: Button
+var save_game_button: Button
+var save_shade: ColorRect
+var save_panel: Panel
+var save_heading: Label
+var save_status: Label
+var slot_buttons: Array[Button]=[]
+var save_mode="load"
+var save_return="menu"
+var save_return_page="hub"
+var pending_slot=-1
 var journey_panel: Panel
 var journey_scroll: ScrollContainer
 var journey_grid: GridContainer
@@ -40,10 +48,14 @@ var intro_quote: Label
 var intro_gear: Label
 var intro_diamonds: Label
 var result_title: Label
+var result_quote: Label
+var result_name: Label
 var result_text: Label
 var result_art: TextureRect
 var result_action: Button
 var result_end: Button
+var intro_save: Button
+var result_save: Button
 var board_rows: Array[Label]=[]
 var board_wins: Array[Label]=[]
 var board_points: Array[Label]=[]
@@ -64,7 +76,6 @@ var mode_buttons: Array[Button]=[]
 var name_one: LineEdit
 var name_two: LineEdit
 var active_hint = ""
-var resume_button: Button
 var mode_note: Label
 var quality_button: Button
 var sound_button: Button
@@ -108,7 +119,7 @@ func _ready() -> void:
   button.add_theme_font_override("font",bold);button.add_theme_font_size_override("font_size",18)
   button.tooltip_text="Call pocket %d [%d]" % [index+1,index+1]
   pocket_buttons.append(button)
- _make_menu();_make_settings();_make_help();_make_profiles();_make_frontend()
+ _make_menu();_make_settings();_make_help();_make_profiles();_make_frontend();_make_saves()
 
 func _process(_dt: float) -> void:
  var vp =get_viewport_rect().size
@@ -119,8 +130,9 @@ func _process(_dt: float) -> void:
  menu.visible=game.state=="menu" and menu_page=="setup"
  _front_update()
  _sync_profiles()
- if is_instance_valid(resume_button): resume_button.visible=game.has_save()
  settings.visible=game.state=="paused"
+ save_shade.visible=game.state=="saves"
+ save_game_button.disabled=game.campaign.kind!="tournament"
  quality_button.text="Visuals\n"+("High quality" if game.high_quality else "Smooth performance")
  sound_button.text="Sound effects\n"+("On" if game.sound_enabled else "Off")+"  ·  M"
  music_button.text="Music\n"+("On" if game.music_enabled else "Off")+"  ·  N"
@@ -192,8 +204,6 @@ func _make_menu() -> void:
   game.rules.names=[name_one.text.strip_edges() if name_one.text.strip_edges()!="" else "PLAYER 1",name_two.text.strip_edges() if name_two.text.strip_edges()!="" else "PLAYER 2"]
   game.start_local(selected_mode),menu)
  _button("QUIT",Vector2(555,570),Vector2(255,63),func():game.quit_game(),menu)
- resume_button=_button("RESUME LAST SAVED MATCH",Vector2(35,638),Vector2(775,28),func():
-  if not game.resume_match(): mode_note.text="Saved match could not be opened. Start a new match instead.",menu)
  _select_mode(0)
 func _select_mode(index: int) -> void:
  selected_mode=index
@@ -201,24 +211,78 @@ func _select_mode(index: int) -> void:
  for i in range(mode_buttons.size()): mode_buttons[i].modulate=Color("e8c994") if i==index else Color.WHITE
 
 func _make_settings() -> void:
- settings=_panel(Vector2(470,110),Vector2(660,680));settings.visible=false
- _wood_surface(Vector2.ZERO,Vector2(660,680),settings,0.38)
- _label("THE LAST POCKET",Vector2(38,29),17,settings,GOLD)
- var heading=_label("Match paused",Vector2(35,65),42,settings,LIGHT);heading.add_theme_font_override("font",bold)
- _label("Take a breath. Your table is waiting.",Vector2(38,123),17,settings,DIM)
- _wood_button("Resume","play",Vector2(30,165),Vector2(600,76),func():game.toggle_pause(),settings)
- music_button=_wood_button("Music","music",Vector2(30,261),Vector2(290,90),func():game.toggle_music(),settings)
- sound_button=_wood_button("Sound effects","sound",Vector2(340,261),Vector2(290,90),func():game.toggle_sound(),settings)
- quality_button=_wood_button("Visuals","settings",Vector2(30,371),Vector2(290,90),func():game.toggle_quality(),settings)
- journey_button=_wood_button("Your journey","chart",Vector2(340,371),Vector2(290,90),func():
+ settings=_panel(Vector2(470,80),Vector2(660,740));settings.visible=false;settings.z_index=50
+ _wood_surface(Vector2.ZERO,Vector2(660,740),settings,0.38)
+ _label("THE LAST POCKET",Vector2(38,25),17,settings,GOLD)
+ var heading=_label("Match paused",Vector2(35,61),42,settings,LIGHT);heading.add_theme_font_override("font",bold)
+ _label("Your table is frozen. Resume whenever you are ready.",Vector2(38,117),16,settings,DIM)
+ var resume=_wood_button("Resume play","play",Vector2(30,154),Vector2(600,70),func():game.resume_play(),settings)
+ resume.name="ResumePlay";resume.tooltip_text="Resume the paused match [Esc]"
+ save_game_button=_wood_button("Save tournament","save",Vector2(30,242),Vector2(290,70),func():show_saves("save"),settings)
+ save_game_button.tooltip_text="Save this AI tournament to one of ten slots. Local matches are not saved."
+ _wood_button("Load tournament","chart",Vector2(340,242),Vector2(290,70),func():show_saves("load"),settings)
+ music_button=_wood_button("Music","music",Vector2(30,330),Vector2(290,80),func():game.toggle_music(),settings)
+ sound_button=_wood_button("Sound effects","sound",Vector2(340,330),Vector2(290,80),func():game.toggle_sound(),settings)
+ quality_button=_wood_button("Visuals","settings",Vector2(30,428),Vector2(290,80),func():game.toggle_quality(),settings)
+ journey_button=_wood_button("Your journey","chart",Vector2(340,428),Vector2(290,80),func():
   if game.campaign.kind=="tournament":show_journey()
-  else:game.toggle_pause();help_panel.visible=true,settings)
- _wood_button("Main menu","back",Vector2(30,497),Vector2(290,67),func():game.open_menu(),settings)
- _wood_button("Quit game","close",Vector2(340,497),Vector2(290,67),func():game.quit_game(),settings)
- _label("Your last settled position is saved.",Vector2(38,609),16,settings,DIM)
+  else:help_panel.visible=true,settings)
+ _wood_button("Main menu","back",Vector2(30,540),Vector2(290,65),func():game.open_menu(),settings)
+ _wood_button("Quit game","close",Vector2(340,540),Vector2(290,65),func():game.quit_game(),settings)
+ _wrapped("Progress is saved only when you choose Save tournament.
+No automatic progress saving.",Vector2(38,638),Vector2(584,62),17,settings,DIM)
+
+func _make_saves() -> void:
+ save_shade=ColorRect.new();save_shade.size=Vector2(1600,900);save_shade.color=Color(0.008,0.013,0.014,0.92);save_shade.z_index=70;add_child(save_shade);save_shade.visible=false
+ save_panel=_panel(Vector2(200,55),Vector2(1200,790));save_panel.reparent(save_shade);save_panel.position=Vector2(200,55)
+ _wood_surface(Vector2.ZERO,Vector2(1200,790),save_panel,0.24)
+ save_heading=_label("LOAD TOURNAMENT",Vector2(36,24),32,save_panel,GOLD);save_heading.add_theme_font_override("font",bold)
+ _wrapped("Ten separate slots. Each save records the player and local date/time. Progress is never saved automatically.",Vector2(38,78),Vector2(1110,45),18,save_panel,DIM)
+ for index in range(game.SAVE_SLOTS):
+  var slot=index
+  var button=_button("",Vector2(36,142+index*50),Vector2(1128,43),func():_choose_slot(slot),save_panel)
+  button.alignment=HORIZONTAL_ALIGNMENT_LEFT;button.add_theme_font_size_override("font_size",18);slot_buttons.append(button)
+ save_status=_wrapped("",Vector2(38,655),Vector2(1120,50),18,save_panel,GOLD)
+ _icon_button(" BACK","back",Vector2(36,718),Vector2(1128,45),close_saves,save_panel)
+
+func show_saves(mode: String) -> void:
+ if mode=="save" and game.campaign.kind!="tournament":return
+ if game.state=="saves":return
+ save_return=game.state;save_return_page=menu_page;save_mode=mode;pending_slot=-1
+ game.charging=false;game.power_drag=false;game.spin_drag=false;game.state="saves";help_panel.visible=false
+ save_heading.text="SAVE TOURNAMENT" if mode=="save" else "LOAD TOURNAMENT"
+ save_status.text="Choose an empty slot, or select an existing save to replace it." if mode=="save" else "Choose a saved tournament. Active frames open paused."
+ _refresh_slots()
+
+func _refresh_slots() -> void:
+ var slots=game.list_save_slots()
+ for info in slots:
+  var button=slot_buttons[info.index]
+  button.disabled=save_mode=="load" and not info.valid
+  if info.empty:button.text="%02d   ·   EMPTY SLOT" % (info.index+1)
+  elif not info.valid:button.text="%02d   ·   UNREADABLE SAVE%s" % [info.index+1," — select to replace" if save_mode=="save" else ""]
+  else:
+   var bias=int(info.offset);var offset="UTC%s%02d:%02d" % ["+" if bias>=0 else "-",absi(bias)/60,absi(bias)%60]
+   button.text="%02d   ·   %s    |    %s (%s)    |    %s · Frame %02d / 48" % [info.index+1,info.player,info.timestamp,offset,game.Campaign.TIERS[int(info.tier)],info.frame]
+  if pending_slot==info.index:button.text="%02d   ·   CONFIRM REPLACE THIS SAVE — CLICK AGAIN" % (info.index+1)
+
+func _choose_slot(index: int) -> void:
+ if save_mode=="load":
+  if not game.load_slot(index):save_status.text="This save could not be loaded. Your current game is unchanged."
+  return
+ var result=game.save_slot(index,pending_slot==index)
+ save_status.text=result.message
+ pending_slot=index if result.get("confirm",false) else -1
+ _refresh_slots()
+
+func close_saves() -> void:
+ if game.state!="saves":return
+ if pending_slot>=0:
+  pending_slot=-1;save_status.text="Replacement cancelled. The original save was kept.";_refresh_slots();return
+ game.state=save_return;menu_page=save_return_page
 
 func _make_help() -> void:
- help_panel=_panel(Vector2(310,165),Vector2(980,595));help_panel.visible=false
+ help_panel=_panel(Vector2(310,165),Vector2(980,595));help_panel.visible=false;help_panel.z_index=60
  _label("AT THE TABLE",Vector2(35,25),32,help_panel,GOLD)
  _label("Aim with the mouse; click the cloth to lock your direction.\nSet power with the mouse wheel or drag the left meter.\nPress SPACE / ENTER or click SHOOT when ready. Right-click unlocks aim.\n\nDrag the white spin ball at the lower right for draw, follow and side.\nWhen you have ball in hand, click a clear position on the cloth.\nSnooker placement is restricted to the D; the outline shows the baulk area.\n\nFor called shots, select a ball below and choose a numbered pocket.\nSnooker colours are nominated using the colour selector.\nH: help. ESC: pause. F11: fullscreen. M: effects. N: music. F3: FPS.\n\nClub rules are used; referee-dependent tournament exceptions are\ndocumented in RULES.md. Local players share controls. In VS AI, you are player one.",Vector2(35,90),20,help_panel,LIGHT)
  _button("BACK TO TABLE",Vector2(35,510),Vector2(910,50),func():help_panel.visible=false,help_panel)
@@ -389,8 +453,9 @@ func _icon_button(text: String,icon_name: String,position_at: Vector2,dimensions
  button.icon=load("res://assets/ui/icons/"+icon_name+".svg");button.add_theme_constant_override("icon_max_width",28)
  button.alignment=HORIZONTAL_ALIGNMENT_LEFT
  return button
-func _portrait(rival: Dictionary) -> AtlasTexture:
- var path=str(rival.portrait)
+func _portrait(rival: Dictionary,outcome: String="") -> AtlasTexture:
+ var path=str(rival.get("portrait_"+outcome,rival.portrait)) if not outcome.is_empty() else str(rival.portrait)
+ if not ResourceLoader.exists(path):path=str(rival.portrait)
  if not atlas_cache.has(path):atlas_cache[path]=load(path)
  var atlas: Texture2D=atlas_cache[path];var texture=AtlasTexture.new();texture.atlas=atlas
  var width=atlas.get_width()/3.0;var height=atlas.get_height()/4.0
@@ -428,9 +493,7 @@ func _make_frontend():
  _icon_button("  VERSUS AI", "ai",Vector2(940,378),Vector2(470,76),show_ai,hub_page)
  _icon_button("  TOP TEN", "chart",Vector2(940,485),Vector2(228,55),show_board,hub_page)
  _icon_button("  QUIT", "close",Vector2(1183,485),Vector2(227,55),func():game.quit_game(),hub_page)
- var resume=_icon_button("  RESUME SAVED MATCH","play",Vector2(940,562),Vector2(470,53),func():
-  if not game.resume_match():resume_button.text="Start a new match to use this build.",hub_page)
- resume.name="HubResume"
+ _icon_button("  LOAD TOURNAMENT","chart",Vector2(940,562),Vector2(470,53),func():show_saves("load"),hub_page)
  ai_page=_page_panel(Vector2(800,145),Vector2(710,620))
  var ai_heading=_label("THE CHAMPIONSHIP",Vector2(36,30),31,ai_page,GOLD);ai_heading.add_theme_font_override("font",bold)
  _icon_button(" BACK","back",Vector2(540,27),Vector2(135,43),show_hub,ai_page)
@@ -438,8 +501,9 @@ func _make_frontend():
  _label("YOUR NAME",Vector2(38,184),14,ai_page,DIM)
  ai_name=LineEdit.new();ai_name.position=Vector2(36,211);ai_name.size=Vector2(637,48);ai_name.max_length=18;ai_name.text="PLAYER 1";ai_page.add_child(ai_name)
  _icon_button("  START AMATEUR TOUR","trophy",Vector2(36,289),Vector2(637,72),func():game.launch_tournament(ai_name.text),ai_page)
- resume_tour=_icon_button("  CONTINUE JOURNEY","play",Vector2(36,383),Vector2(637,54),func():game.resume_match(),ai_page)
- inspect_tour=_icon_button("  YOUR JOURNEY","chart",Vector2(36,451),Vector2(637,54),_inspect_journey,ai_page)
+ _icon_button("  LOAD TOURNAMENT","chart",Vector2(36,383),Vector2(637,54),func():show_saves("load"),ai_page)
+ _wrapped("Saving is your choice: Pause → Save tournament.
+Ten named slots. No automatic saves.",Vector2(38,451),Vector2(625,65),19,ai_page,GOLD)
  _wrapped("Rivals are revealed as you meet them. Three diamonds give you another chance.",Vector2(38,540),Vector2(625,53),17,ai_page,DIM)
  intro_panel=_page_panel(Vector2(220,95),Vector2(1160,720))
  intro_art=_art(Vector2(32,90),Vector2(440,570),intro_panel)
@@ -453,10 +517,14 @@ func _make_frontend():
  _icon_button(" JOURNEY","chart",Vector2(950,602),Vector2(155,62),show_journey,intro_panel)
  result_panel=_page_panel(Vector2(220,95),Vector2(1160,720))
  result_art=_art(Vector2(32,90),Vector2(440,570),result_panel)
- result_title=_label("",Vector2(520,70),38,result_panel,GOLD)
- result_text=_wrapped("",Vector2(520,165),Vector2(585,310),24,result_panel,LIGHT)
+ result_name=_label("",Vector2(520,30),19,result_panel,DIM)
+ result_title=_label("",Vector2(520,70),36,result_panel,GOLD)
+ result_quote=_wrapped("",Vector2(520,145),Vector2(585,155),27,result_panel,GOLD)
+ result_text=_wrapped("",Vector2(520,322),Vector2(585,180),19,result_panel,LIGHT)
  result_action=_icon_button("","play",Vector2(520,525),Vector2(585,60),func():game.result_primary(),result_panel)
  result_end=_icon_button("END RUN & VIEW TOP TEN","chart",Vector2(520,603),Vector2(585,48),func():game.end_tournament(),result_panel)
+ intro_save=_icon_button(" SAVE","save",Vector2(950,24),Vector2(155,38),func():show_saves("save"),intro_panel)
+ result_save=_icon_button(" SAVE","save",Vector2(950,24),Vector2(155,38),func():show_saves("save"),result_panel)
  _make_journey()
  board_panel=_page_panel(Vector2(340,75),Vector2(920,750))
  _label("THE TOP TEN",Vector2(44,28),36,board_panel,GOLD)
@@ -476,14 +544,12 @@ func _front_update():
  ai_page.visible=game.state=="menu" and menu_page=="ai"
  board_panel.visible=game.state=="menu" and menu_page=="board"
  journey_panel.visible=game.state=="journey"
- resume_tour.visible=game.has_tournament_save();inspect_tour.visible=game.has_tournament_save()
  intro_panel.visible=game.state=="intro";result_panel.visible=game.state=="result"
+ intro_save.visible=game.campaign.kind=="tournament";result_save.visible=game.campaign.kind=="tournament"
  if is_instance_valid(press_hint):press_hint.modulate.a=0.48+0.52*(0.5+0.5*sin(game.play_time*3.4))
- var resume=hub_page.get_node_or_null("HubResume")
- if resume!=null:resume.visible=game.has_save()
  front_music.modulate=Color.WHITE if game.music_enabled else Color(0.40,0.40,0.40)
  front_effects.modulate=Color.WHITE if game.sound_enabled else Color(0.40,0.40,0.40)
- if not menu.visible and front.get_index()!=get_child_count()-1:move_child(front,get_child_count()-1)
+ if front.visible and not menu.visible and front.get_index()!=get_child_count()-1:move_child(front,get_child_count()-1)
  # The setup panel predates the hero backdrop and must draw in front of it.
  if menu.visible:move_child(menu,get_child_count()-1)
 func show_hub():
@@ -502,8 +568,10 @@ func show_intro():
  intro_diamonds.text=("◆ ".repeat(game.campaign.diamonds)+"   %06d POINTS" % game.campaign.points) if game.campaign.kind=="tournament" else "SINGLE FRAME  /  "+game.rules.MODES[game.rules.mode]
 func show_result():
  var won=game.rules.winner==0
- result_art.texture=_portrait(game.campaign.rival()) if game.campaign.kind!="local" else load("res://assets/characters/title_hero.png")
- result_title.text="CLEAN FINISH!" if won else "ANOTHER ANGLE?"
+ result_art.texture=_portrait(game.campaign.rival(),"loss" if won else "win") if game.campaign.kind!="local" else load("res://assets/characters/title_hero.png")
+ result_title.text="FRAME WON!" if won else "FRAME LOST"
+ result_name.text=game.campaign.rival().name if game.campaign.kind=="tournament" else "LOCAL VERSUS"
+ result_quote.text="“"+str(game.campaign.rival().get("result_loss_quote" if won else "result_win_quote","Good frame!"))+"”" if game.campaign.kind=="tournament" else "Another frame? The table is ready."
  if game.campaign.kind=="tournament":
   result_end.text="END RUN & VIEW TOP TEN"
   if game.campaign.wins==48:
@@ -517,12 +585,12 @@ Four clubs conquered.
 
 %s" % [game.campaign.rival().name,"A new club and better equipment await." if game.campaign.wins%12==0 else "One more name off the chalkboard."]) if won else "%s takes this frame.
 
-Spend one diamond for a rematch, or end your run and save your score." % game.campaign.rival().name
+Spend one diamond to retry this rival, or end your run and record your score." % game.campaign.rival().name
    result_text.text+="
 
 %06d POINTS  /  %d WINS
-%d CONTINUE DIAMONDS" % [game.campaign.points,game.campaign.wins,game.campaign.diamonds]
-  result_action.text="VIEW TOP TEN" if game.campaign.finished else ("NEXT RIVAL" if won else "◆  CONTINUE — 1 DIAMOND")
+%d RETRY DIAMONDS" % [game.campaign.points,game.campaign.wins,game.campaign.diamonds]
+  result_action.text="VIEW TOP TEN" if game.campaign.finished else ("NEXT RIVAL" if won else "◆  RETRY FRAME — 1 DIAMOND")
   result_end.visible=not game.campaign.finished;result_action.disabled=false
  else:
   result_title.text=game.rules.names[game.rules.winner]+" WINS"
@@ -640,10 +708,6 @@ func close_journey():
  if game.state!="journey":return
  game.state=journey_return;menu_page=journey_return_page
  game._play_sound("ui_back",0.3)
-
-func _inspect_journey():
- if game.resume_match():
-  show_journey();journey_return="menu";journey_return_page="ai"
 
 func _focus_journey_card(card: Control):
  await get_tree().process_frame

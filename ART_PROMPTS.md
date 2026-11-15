@@ -7,3 +7,5 @@ The game draws live 3D balls, rolling orientation, reflections, cue, shadows and
 The table production prompt is in docs/table-v2-prompt.txt. Character and table-upgrade prompts are in docs/campaign-art-prompts.json. Rival dialogue is in data/rivals.json and docs/RIVAL_VOICE_LINES.csv. The final app icon is the Last Shot (8-ball and pocket) design selected for The Last Pocket.
 
 Fonts and music have separate terms, recorded in NOTICE and LICENSES. Screenshot images in docs are actual game renders with staged test positions.
+
+The eight result atlases under assets/characters/results were generated from each rank’s existing 3×4 roster atlas, preserving faces, outfits and slot positions. Victory variations use delighted smiles, playful grins and celebratory cue poses. Defeat variations use rueful smiles, slumped shoulders and good-humoured disappointment. They provide two outcome expressions for each of the 48 original adults. The 96 associated original result lines are in data/rivals.json and docs/RIVAL_RESULT_VOICE_LINES.csv.

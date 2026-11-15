@@ -34,13 +34,15 @@ func run():
   if game.state=="aim":break
  check(game.state=="aim" and game.rules.player==1,"Miss ends shot and passes to second player")
  # Scene has a valid ball-in-hand preview and a legal saved match after foul.
- game.rules.scores=[7,4];game.rules.player=1;game.rules.names=["ALPHA","BRAVO"];game._save_match()
+ check(not game.save_slot(0).ok,"Local matches cannot be saved as tournaments")
+ game.launch_tournament("ALPHA");game.begin_frame()
+ game.rules.scores=[7,4];game.rules.player=1;game.rules.names=["ALPHA","BRAVO"];check(game.save_slot(0).ok,"Explicit tournament save succeeds")
  game.rules.scores=[0,0];game.rules.player=0
- check(game.resume_match(),"Saved match loads")
+ check(game.load_slot(0),"Chosen saved slot loads");game.resume_play()
  check(game.rules.scores==[7,4] and game.rules.player==1 and game.rules.names==["ALPHA","BRAVO"],"Resume restores scores, players and turn")
  check(game.sim.balls.size()==16,"Resume restores all pool balls")
  # A release over the interface still ends a charged shot rather than sticking.
- game.rules.ball_in_hand=false;game.sim.respot(0,Vector2(-0.7,0.3));game.power_drag=true;game.power=0.2;game.state="aim"
+ game.rules.ball_in_hand=false;game.sim.respot(0,Vector2(-0.7,0.3));game.rules.player=0;game.power_drag=true;game.power=0.2;game.state="aim"
  var release=InputEventMouseButton.new();release.button_index=MOUSE_BUTTON_LEFT;release.pressed=false;game._input(release)
  check(not game.power_drag and game.state=="aim","Power release over UI preserves deliberate shot")
  game.open_menu();check(game.state=="menu" and not game.charging,"New match cancels shot charging")
@@ -52,8 +54,8 @@ func run():
  var old_quality=game.high_quality;game.toggle_quality();check(game.high_quality!=old_quality,"Performance graphics preset works");game.toggle_quality()
  var old_sound=game.sound_enabled;game.toggle_sound();check(game.sound_enabled!=old_sound,"Effects toggle works");game.toggle_sound()
  var old_music=game.music_enabled;game.toggle_music();check(game.music_enabled!=old_music,"Music toggle works without supplied audio");game.toggle_music()
- game.start_match(0);game.set_process(false);game.set_physics_process(false);game._save_match()
- var save_file=FileAccess.open("user://match.save",FileAccess.READ);var valid=save_file.get_var(false);save_file.close()
+ game.launch_tournament("ACE");game.set_process(false);game.set_physics_process(false);game.save_slot(1)
+ var valid=game._read_slot(1)
  check(game._valid_save(valid),"Fresh match save validates")
  var bad=valid.duplicate(true);bad.rules.player=99;check(not game._valid_save(bad),"Invalid saved player is rejected")
  bad=valid.duplicate(true);bad.balls[1].id=0;check(not game._valid_save(bad),"Duplicate saved ball is rejected")

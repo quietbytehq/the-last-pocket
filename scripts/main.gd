@@ -16,8 +16,8 @@ var ai_delay=0.0
 var ai_result: Dictionary={}
 var music_tracks: Dictionary={}
 var current_music=""
-var save_available=false
-var saved_kind=""
+var pause_origin="aim"
+const SAVE_SLOTS=10
 var prewarm_frames=4
 var sim=Physics.new()
 var rules=Rules.new()
@@ -69,7 +69,6 @@ func _ready() -> void:
  rules.configure(0,sim);table.configure(sim,rules);ui.prime_ball_badges();ui.refresh_calls()
  get_viewport().size_changed.connect(func():table._position_camera();_apply_render_scale())
  _apply_render_scale()
- _refresh_saved_available()
  if not qa_mode and not get_meta("skip_title",false):state="title"
  _music_context()
  if qa_mode:
@@ -87,7 +86,6 @@ func start_match(mode: int) -> void:
  # Do not leave a solid cue-ball model at the default position during placement.
  if rules.ball_in_hand:
   sim.ball(rules.cue_id()).active=false;sim.ball(rules.cue_id()).fall=1.0
- _save_match()
  _play_sound("start")
 
 func _physics_process(dt: float) -> void:
@@ -103,7 +101,6 @@ func _physics_process(dt: float) -> void:
    rules.resolve(sim,before);aim_locked=false;state="aim";stationary_time=0;spin=Vector2.ZERO;ui.refresh_calls()
    if rules.match_over:_match_finished()
    elif "FOUL" in rules.message:_play_sound("foul")
-   _save_match()
  else: stationary_time=0
  var events: Array=sim.collisions.duplicate();sim.collisions.clear()
  var handled =0
@@ -167,6 +164,9 @@ func _unhandled_input(event: InputEvent) -> void:
  if event is InputEventKey and event.pressed and not event.echo:
   if event.keycode==KEY_M:toggle_sound();return
   if event.keycode==KEY_N:toggle_music();return
+ if state=="saves":
+  if event is InputEventKey and event.pressed and event.keycode==KEY_ESCAPE:ui.close_saves()
+  return
  if state=="journey":
   if event is InputEventKey and event.pressed and event.keycode==KEY_ESCAPE:ui.close_journey()
   return
@@ -230,7 +230,6 @@ func _unhandled_input(event: InputEvent) -> void:
    if rules.is_placement_legal(p,sim):
     sim.place(rules.cue_id(),p);rules.ball_in_hand=false;rules.baulk_only=false
     rules.message="%s · aim, set power, then press SPACE to shoot" % rules.names[rules.player]
-    _save_match()
    else: rules.message="Choose a clear legal position%s" % (" inside the D" if rules.is_snooker() else " on the cloth")
    return
   if sim.pocketed_table:
@@ -253,7 +252,6 @@ func select_pocket(index: int) -> void:
  if state!="aim" or not human_turn() or not sim.pocketed_table or index<0 or index>5:return
  rules.called_pocket=index
  rules.message="Pocket %d called · adjust your aim and power, then shoot." % (index+1)
- _save_match()
 
 func strike(from_ai: bool=false) -> void:
  if not from_ai and not human_turn():return
@@ -268,14 +266,23 @@ func strike(from_ai: bool=false) -> void:
  _play_sound("cue",0.3+power*0.6,sim.ball(rules.cue_id()).p.x/sim.half_size.x)
 
 func open_menu() -> void:
- _save_match();_invalidate_ai();_stop_spoken()
+ _invalidate_ai();_stop_spoken()
  state="menu";charging=false;power_drag=false;spin_drag=false;ui.help_panel.visible=false
  ui.show_hub();_music_context()
+func pause_play() -> void:
+ if state not in ["aim","rolling"]:return
+ pause_origin=state;state="paused"
+ charging=false;power_drag=false;spin_drag=false;ui.help_panel.visible=false
+
+func resume_play() -> void:
+ if state!="paused":return
+ state=pause_origin if pause_origin in ["aim","rolling"] else "aim"
+ ui.help_panel.visible=false
+
 func toggle_pause() -> void:
- if state not in ["aim","rolling","paused"]: return
- if state=="paused": state=str(get_meta("resume_state","aim"))
- else:
-  set_meta("resume_state",state);state="paused";charging=false;power_drag=false;spin_drag=false
+ if state=="paused":resume_play()
+ else:pause_play()
+
 func switch_camera() -> void:
  table.elevated_view=not table.elevated_view;table._position_camera()
 func _apply_render_scale() -> void:
@@ -345,18 +352,18 @@ func _play_sound(name: String,gain: float=0.6,pan: float=0.0) -> void:
  voice.finished.connect(voice.queue_free);voice.play();active_voices.append(voice)
 func _save_settings() -> void:
  if qa_mode: return
- var config =ConfigFile.new();config.set_value("display","high_quality",high_quality);config.set_value("audio","enabled",sound_enabled);config.set_value("audio","music",music_enabled);config.set_value("players","names",rules.names);config.save("user://settings.cfg")
+ var config =ConfigFile.new();config.set_value("display","high_quality",high_quality);config.set_value("audio","enabled",sound_enabled);config.set_value("audio","music",music_enabled);config.save("user://settings.cfg")
 func _load_settings() -> void:
  high_quality=false
  var config =ConfigFile.new()
  if config.load("user://settings.cfg")==OK:
-  high_quality=bool(config.get_value("display","high_quality",false));sound_enabled=bool(config.get_value("audio","enabled",true));music_enabled=bool(config.get_value("audio","music",true));_load_player_names(config.get_value("players","names",["PLAYER 1","PLAYER 2"]))
+  high_quality=bool(config.get_value("display","high_quality",false));sound_enabled=bool(config.get_value("audio","enabled",true));music_enabled=bool(config.get_value("audio","music",true))
  if not high_quality:
   high_quality=true;toggle_quality()
 func quit_game() -> void:
  if quitting: return
  quitting=true
- _save_settings();_save_match()
+ _save_settings()
  state="closing"
  await prepare_to_close()
  get_tree().quit()
@@ -389,28 +396,75 @@ func toggle_music() -> void:
  _save_settings()
 
 const SAVED_RULE_FIELDS=["mode","player","names","scores","groups","winner","ball_in_hand","baulk_only","free_shot","break_shot","phase","nominated","clearance","called_ball","called_pocket","target","message","match_over","consecutive_fouls"]
-func _save_match() -> void:
- if qa_mode: return
- if state not in ["aim","intro","result"] and not (state=="paused" and get_meta("resume_state","")=="aim"): return
- var data={"version":4,"pocketed_by":pocketed_by,"session":campaign.snapshot(),"ui_state":state if state!="paused" else "aim","rules":{},"balls":sim.balls.duplicate(true),"aim":aim,"power":power}
- for key in SAVED_RULE_FIELDS: data.rules[key]=rules.get(key)
- var file=FileAccess.open("user://match.tmp",FileAccess.WRITE)
- if file!=null:
-  file.store_var(data);file.close()
-  saved_kind=campaign.kind
-  save_available=DirAccess.rename_absolute(ProjectSettings.globalize_path("user://match.tmp"),ProjectSettings.globalize_path("user://match.save"))==OK
-func _refresh_saved_available():
- save_available=false;saved_kind=""
- if not FileAccess.file_exists("user://match.save"):return
- var file=FileAccess.open("user://match.save",FileAccess.READ)
- if file==null or file.get_length()>131072:return
- var data=file.get_var(false)
- save_available=_valid_save(data)
- if save_available:saved_kind=data.session.kind
-func has_save() -> bool:
- return save_available
-func has_tournament_save() -> bool:
- return save_available and saved_kind=="tournament"
+func slot_path(index: int) -> String:
+ return "user://saves/tournament-%02d.save" % (index+1)
+
+func _save_digest(payload: PackedByteArray) -> PackedByteArray:
+ var hash=HashingContext.new();hash.start(HashingContext.HASH_SHA256);hash.update(payload);return hash.finish()
+
+func _read_slot(index: int) -> Dictionary:
+ if index<0 or index>=SAVE_SLOTS:return {}
+ var file=FileAccess.open(slot_path(index),FileAccess.READ)
+ if file==null or file.get_length()<40 or file.get_length()>262144:return {}
+ if file.get_buffer(4).get_string_from_ascii()!="TLP5":return {}
+ var checksum=file.get_buffer(32)
+ var payload=file.get_buffer(file.get_length()-36)
+ if _save_digest(payload)!=checksum:return {}
+ var value=bytes_to_var(payload)
+ return value if value is Dictionary else {}
+
+func list_save_slots() -> Array:
+ var slots=[]
+ for index in range(SAVE_SLOTS):
+  var exists=FileAccess.file_exists(slot_path(index))
+  var data=_read_slot(index) if exists else {}
+  var valid=exists and _valid_save(data) and data.get("version",0)==5
+  slots.append({"index":index,"empty":not exists,"valid":valid,"player":data.get("saved_by","") if valid else "","timestamp":data.get("saved_at_local","") if valid else "","offset":data.get("utc_offset_minutes",0) if valid else 0,"frame":data.session.rival_index+1 if valid else 0,"tier":data.session.rival_index/12 if valid else 0})
+ return slots
+
+func snapshot_match() -> Dictionary:
+ var phase=ui.save_return if state=="saves" else state
+ if phase=="paused":phase=pause_origin
+ if campaign.kind!="tournament" or phase not in ["aim","rolling","intro","result"]:return {}
+ var data={"version":5,"saved_by":campaign.human_name,"saved_at_utc":int(Time.get_unix_time_from_system()),"saved_at_local":Time.get_datetime_string_from_system(false,true),"utc_offset_minutes":int(Time.get_time_zone_from_system().bias),"pocketed_by":pocketed_by.duplicate(true),"session":campaign.snapshot(),"ui_state":phase,"rules":{},"balls":sim.balls.duplicate(true),"aim":aim,"aim_locked":aim_locked,"power":power,"spin":spin,"placement":placements,"stationary_time":stationary_time,"physics_elapsed":sim.elapsed,"shot":sim.shot.duplicate(true),"before":before.duplicate(true)}
+ for key in SAVED_RULE_FIELDS:data.rules[key]=rules.get(key).duplicate(true) if rules.get(key) is Array else rules.get(key)
+ return data
+
+func save_slot(index: int,overwrite: bool=false) -> Dictionary:
+ if qa_mode:return {"ok":false,"message":"Saving is disabled during automated checks."}
+ if index<0 or index>=SAVE_SLOTS:return {"ok":false,"message":"Choose one of the ten save slots."}
+ if FileAccess.file_exists(slot_path(index)) and not overwrite:return {"ok":false,"confirm":true,"message":"Click this slot again to confirm replacement."}
+ var data=snapshot_match()
+ if data.is_empty() or not _valid_save(data):return {"ok":false,"message":"Only an active AI tournament can be saved."}
+ var folder=ProjectSettings.globalize_path("user://saves")
+ if DirAccess.make_dir_recursive_absolute(folder)!=OK:return {"ok":false,"message":"The save folder could not be created."}
+ var file=FileAccess.open(slot_path(index)+".tmp",FileAccess.WRITE)
+ if file==null:return {"ok":false,"message":"The save could not be written."}
+ var payload=var_to_bytes(data)
+ file.store_buffer("TLP5".to_ascii_buffer());file.store_buffer(_save_digest(payload));file.store_buffer(payload);file.flush();file.close()
+ var status=DirAccess.rename_absolute(ProjectSettings.globalize_path(slot_path(index)+".tmp"),ProjectSettings.globalize_path(slot_path(index)))
+ if status!=OK:return {"ok":false,"message":"The existing save was kept; replacement failed."}
+ return {"ok":true,"message":"Saved to slot %02d · %s" % [index+1,data.saved_at_local]}
+
+func load_slot(index: int) -> bool:
+ var data=_read_slot(index)
+ if data.get("version",0)!=5 or not _valid_save(data):return false
+ _invalidate_ai();_join_ai();_stop_spoken();campaign.restore(data.session);ai_mode=int(data.rules.mode)
+ table.upgrade=campaign.tier();rules.configure(data.rules.mode,sim)
+ for key in SAVED_RULE_FIELDS:rules.set(key,data.rules[key])
+ sim.balls.assign(data.balls);sim.shot=data.shot.duplicate(true);sim.elapsed=float(data.physics_elapsed);sim.collisions.clear()
+ before=data.before.duplicate(true);stationary_time=float(data.stationary_time)
+ table.configure(sim,rules);_apply_render_scale();ui.refresh_calls()
+ pocketed_by=data.pocketed_by.duplicate(true);aim_locked=data.aim_locked
+ aim=data.aim.normalized();power=float(data.power);spin=data.spin;placements=data.placement
+ charging=false;power_drag=false;spin_drag=false;ui.help_panel.visible=false;ui.pending_slot=-1
+ state=data.ui_state
+ if state in ["aim","rolling"]:pause_origin=state;state="paused"
+ elif state=="intro":ui.show_intro()
+ elif state=="result":ui.show_result()
+ _music_context()
+ return true
+
 func _valid_pair(value,kind: int) -> bool:
  return value is Array and value.size()==2 and typeof(value[0])==kind and typeof(value[1])==kind
 
@@ -420,8 +474,8 @@ func _load_player_names(value) -> void:
    rules.names=value
 
 func _valid_save(data) -> bool:
- if not data is Dictionary or data.get("version",0) not in [3,4]: return false
- if not campaign.valid(data.get("session")) or data.get("ui_state","") not in ["aim","intro","result"]:return false
+ if not data is Dictionary or data.get("version",0)!=5: return false
+ if not campaign.valid(data.get("session")) or data.get("ui_state","") not in ["aim","rolling","intro","result"]:return false
  var saved=data.get("rules")
  if not saved is Dictionary or not data.get("balls") is Array: return false
  var mode=saved.get("mode",-1)
@@ -455,7 +509,7 @@ func _valid_save(data) -> bool:
   ids.append(b.id)
   if not b.get("p") is Vector2 or not b.get("v") is Vector2 or not b.get("spin") is Vector2 or not b.get("q") is Quaternion: return false
   if not b.p.is_finite() or not b.v.is_finite() or not b.spin.is_finite() or not b.q.is_finite(): return false
-  if not b.q.is_normalized() or b.v.length()>0.05: return false
+  if not b.q.is_normalized() or b.v.length()>(12.0 if data.get("version")==5 and data.ui_state=="rolling" else 0.05): return false
   if not b.get("active") is bool or not b.get("pocket") is int: return false
   if b.pocket< -1 or b.pocket>5 or not (b.get("fall") is float or b.get("fall") is int): return false
   if not is_finite(b.fall) or b.fall<0 or b.fall>1: return false
@@ -468,26 +522,50 @@ func _valid_save(data) -> bool:
    for id in ledger:
     if not id is int or id<1 or id>115:return false
  if not (data.get("power") is float or data.get("power") is int): return false
- return is_finite(data.power) and data.power>=0 and data.power<=1
+ if not is_finite(data.power) or data.power<0 or data.power>1:return false
+ return _valid_manual_snapshot(data)
 
-func resume_match() -> bool:
- var file=FileAccess.open("user://match.save",FileAccess.READ)
- if file==null: return false
- var data=file.get_var(false)
- if not _valid_save(data):save_available=false;return false
- _invalidate_ai();campaign.restore(data.session);ai_mode=int(data.rules.mode)
- table.upgrade=campaign.tier() if campaign.kind!="local" else 0
- rules.configure(data.rules.mode,sim)
- for key in SAVED_RULE_FIELDS: rules.set(key,data.rules[key])
- sim.balls.assign(data.balls)
- table.configure(sim,rules);_apply_render_scale();ui.refresh_calls()
- pocketed_by=data.get("pocketed_by",[[],[]]).duplicate(true);aim_locked=false
- aim=data.aim.normalized();power=float(data.power);spin=Vector2.ZERO
- state=data.ui_state;charging=false;power_drag=false;spin_drag=false
- ui.help_panel.visible=false
- if state=="intro":ui.show_intro()
- elif state=="result":ui.show_result()
- _music_context()
+func _valid_manual_snapshot(data: Dictionary) -> bool:
+ if data.session.kind!="tournament" or data.rules.mode!=0:return false
+ if data.get("saved_by")!=data.session.human_name or data.saved_by!=data.rules.names[0]:return false
+ if not data.get("saved_at_utc") is int or data.saved_at_utc<=0:return false
+ if not data.get("saved_at_local") is String or data.saved_at_local.length()!=19:return false
+ var date_pattern=RegEx.new();date_pattern.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$")
+ if date_pattern.search(data.saved_at_local)==null:return false
+ if not data.get("utc_offset_minutes") is int or absi(data.utc_offset_minutes)>840:return false
+ if not data.get("aim_locked") is bool or not data.get("spin") is Vector2 or not data.spin.is_finite() or data.spin.length()>1.5:return false
+ if not data.get("placement") is Vector2 or not data.placement.is_finite():return false
+ for key in ["physics_elapsed","stationary_time"]:
+  if not (data.get(key) is float or data.get(key) is int) or not is_finite(data[key]) or data[key]<0 or data[key]>7200:return false
+ if not data.get("pocketed_by") is Array or not data.get("before") is Dictionary or not data.get("shot") is Dictionary:return false
+ if data.ui_state=="rolling":
+  if data.rules.match_over or data.session.phase!="playing":return false
+  var shot=data.shot;var prior=data.before
+  if shot.get("cue",-1)!=0 or not shot.get("first") is int or shot.first< -1 or shot.first>15:return false
+  for key in ["rails","cushions_at_second"]:
+   if not shot.get(key) is int or shot[key]<0 or shot[key]>10000:return false
+  for key in ["scratch","rail_after_contact"]:
+   if not shot.get(key) is bool:return false
+  if not shot.get("potted") is Array or shot.potted.size()>16:return false
+  var seen=[]
+  for pot in shot.potted:
+   if not pot is Dictionary or not pot.get("id") is int or pot.id<0 or pot.id>15 or pot.id in seen:return false
+   if not pot.get("pocket") is int or pot.pocket<0 or pot.pocket>5:return false
+   seen.append(pot.id)
+  for key in ["targets","contacts"]:
+   var values=prior.get(key) if key=="targets" else shot.get(key)
+   if not values is Array or values.size()>16:return false
+   for id in values:
+    if not id is int or id<0 or id>15:return false
+  for key in ["group_left","reds","lowest"]:
+   if not prior.get(key) is int or prior[key]< -1 or prior[key]>115:return false
+  if prior.get("phase","") not in ["red","colour","clearance"] or not prior.get("free") is bool:return false
+ elif data.ui_state=="aim":
+  if data.rules.match_over or data.session.phase!="playing":return false
+ elif data.ui_state=="intro":
+  if data.rules.match_over or data.session.phase!="intro":return false
+ elif data.ui_state=="result":
+  if not data.rules.match_over or data.session.phase!="result":return false
  return true
 
 func human_turn() -> bool:
@@ -505,18 +583,20 @@ func _start_ai_frame(voice_delay: float=0.35):
  # Alternate opening breaks across the roster. Human remains player one.
  rules.player=campaign.rival_index%2
  rules.message="%s breaks." % rules.names[rules.player]
- state="intro";campaign.phase="intro";ui.show_intro();_save_match();_music_context()
+ state="intro";campaign.phase="intro";ui.show_intro();_music_context()
  _play_sound("rival_reveal");_reveal_voice(campaign.rival().voice,voice_delay,ai_generation)
 func begin_frame():
  if state!="intro":return
- state="aim";campaign.phase="playing";_stop_spoken();_play_sound("ui_confirm");_play_sound("voice_hero_start",0.8);_save_match();_music_context()
+ state="aim";campaign.phase="playing";_stop_spoken();_play_sound("ui_confirm");_play_sound("voice_hero_start",0.8);_music_context()
 func _match_finished():
  _invalidate_ai();campaign.finish_frame(rules.winner==0);state="result"
  if campaign.kind=="tournament" and campaign.finished:_record_run()
- ui.show_result();_save_match();_music_context()
+ ui.show_result();_music_context()
  _play_sound("match_win" if rules.winner==0 else "match_lose")
  if rules.winner==0 and not sfx.has("match_win"):_play_sound("win")
- _play_sound("voice_hero_win" if rules.winner==0 else "voice_hero_lose",0.8)
+ var result_clip=campaign.rival().voice+("_loss" if rules.winner==0 else "_win") if campaign.kind=="tournament" else ""
+ if not result_clip.is_empty() and _audio_asset(result_clip)!=null:_play_sound(result_clip,0.8)
+ else:_play_sound("voice_hero_win" if rules.winner==0 else "voice_hero_lose",0.8)
  if campaign.kind=="tournament" and campaign.finished and campaign.wins==48:_play_sound("tournament_win")
 func result_primary():
  if state!="result":return
@@ -535,7 +615,7 @@ func result_primary():
 func end_tournament():
  var was_tournament=campaign.kind=="tournament"
  if campaign.kind=="tournament" and not campaign.finished:
-  campaign.abandon();_record_run();_save_match()
+  campaign.abandon();_record_run()
  open_menu()
  if was_tournament:ui.show_board()
 func _record_run():

@@ -11,15 +11,19 @@ The title screen leads to **Local Versus** (two humans sharing this computer) or
 | Master | 25–36 | Burgundy cloth, mahogany/brass and a Rosewood Master cue |
 | GOAT | 37–48 | Sapphire cloth, ebony/engraved gold and an Onyx Elite cue |
 
-Each rank has twelve distinct original comic-style rivals. Every rival has a portrait, a personality and an individual teasing introduction. The portrait card is shown before a frame starts. Names and spoken lines are listed in `docs/RIVAL_VOICE_LINES.csv`.
+Each rank has twelve distinct original comic-style rivals. Every rival has a portrait, a personality and an individual teasing introduction. The portrait card is shown before a frame starts. Each rival also has distinct win/loss expression art and two individual result lines. Introduction lines are listed in `docs/RIVAL_VOICE_LINES.csv`; the 96 optional result recordings are in `docs/RIVAL_RESULT_VOICE_LINES.csv`. Text is always shown, even without voice files.
 
 One 8-ball frame is played against each rival. Win to advance. Opening breaks alternate between the human and the AI across the roster. The human always remains player one. Completing twelve rivals unlocks the next club, table finish and cue. Complete all 48 to become champion.
 
-## Three continue diamonds
+## Three retry diamonds
 
 A new championship grants exactly three diamonds. Losing opens a result card: spend one diamond to replay that rival, or end the run. Wins do not spend diamonds. Diamonds do not regenerate between clubs. After three spent diamonds, another loss ends the run. Local matches have ordinary rematches and do not consume tournament diamonds.
 
-Pause and return to the menu keep the latest settled position available through Resume. A shot in flight resumes from the previously saved settled position. Introductions, results, points and spent continues are saved too. The earlier prototype's save format is not loaded into this version.
+## Ten manual save slots
+
+Choose **Save tournament** from Pause, an introduction or a result card. Select one of ten separate slots. Each shows the player name, local date/time and UTC offset, reached rank and frame. Occupied slots require a second click to confirm replacement. **Load tournament** is available from the main menu, AI entry and Pause. Active frames load paused; choose **Resume play** when ready. Shots in flight, aim, spin, power, points, retry diamonds and encounter history are restored.
+
+There is no automatic progress saving on shots, results, menu exit or quit. If you do not select a slot, no progress save is created. Older automatic saves are ignored and left untouched. Local two-player games do not use tournament save slots. Preferences and the Top Ten remain separate local records.
 
 ## Points and the top ten
 
@@ -41,6 +45,6 @@ Gameplay music is designed as calm, upscale hotel-lobby lounge music with subtle
 
 ## Your journey, without spoilers
 
-Open **Your journey** from a rival introduction or the wooden Pause menu. The AI entry page also offers **Your journey** for a saved championship. The view shows the current rival and everyone already encountered, with portraits, rank, defeated/current status and repeat attempts. Future rival names, portraits and descriptions are not created in this view. A win does not reveal the next rival until you advance. Only reached ranks appear in the rank path.
+Open **Your journey** from a rival introduction or the wooden Pause menu. Load a tournament first to inspect its journey. The view shows the current rival and everyone already encountered, with portraits, rank, defeated/current status and repeat attempts. Future rival names, portraits and descriptions are not created in this view. A win does not reveal the next rival until you advance. Only reached ranks appear in the rank path.
 
-Version 4 saves preserve encounter history. Earlier version 3 tournament saves still restore their known victories and current rival; unrecorded historical losses are not invented. The former single-frame AI saves are not accepted into the new sequential championship. The brand changed to The Last Pocket while the existing save location was retained.
+Manual slots use version 5 snapshots with integrity checks. Legacy automatic or earlier save formats are not loaded. The existing Godot user-data location is retained.
