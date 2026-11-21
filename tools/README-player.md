@@ -10,7 +10,7 @@ Godot is not required. The launcher selects Wayland automatically on a Wayland d
 
 The Performance graphics preset is selected on first launch; High is available from Pause. The frame limiter targets 60 fps. See QA_REPORT.md for measured results and remaining performance limits.
 
-Press any key at the illustrated title screen. Choose Local Versus for two humans, or Versus AI for the championship. There is no difficulty selection: new AI runs start in Amateur. The game runs offline; there is no networking.
+Press any key at the illustrated title screen. Choose Local Versus for two humans, or Versus AI for the championship. There is no difficulty selection: new AI runs start in Amateur. The game plays offline; posting qualifying 8-ball championship scores online is optional.
 
 The championship has twelve rivals in each rank: Amateur, Professional, Master and GOAT. Three retry diamonds buy rematches after losses. Tables and cues upgrade between ranks, and the local Top Ten saves your personal best. See TOURNAMENT.md.
 
@@ -30,7 +30,7 @@ Local play has ten modes. Versus AI offers sequential championships in all nine 
 
 Original stereo impact placeholders are included. Put your personal MP3 effects and music in the `audio` subfolder, using the filenames in AUDIO_BRIEF.md, and restart. The supplied two-minute stereo hotel-lobby track is included. Gameplay is designed for calm hotel-lobby lounge music. Music and SFX have separate icons and Pause switches, plus N / M shortcuts.
 
-The Last Pocket 0.7.1 by QuietByte. Pocketed-table graphics use a detailed rendered table plate with live 3D balls, cue, shadows and interactive physics. The overhead view is fixed; carom retains the earlier 3D table.
+The Last Pocket 0.7.2 by QuietByte. All game types use matching detailed table artwork, a fixed overhead view and larger arcade balls, with live 3D balls, cue, shadows and interactive physics. Carom and three-cushion use pocketless tables in the same four tournament finishes.
 
 QuietByte · hello@quietbytehq.uk
 
@@ -58,3 +58,5 @@ The package declares only the game-controller input interface; it does not reque
 The title now shows the hero and rival cast together. Beat all 48 rivals to see the personalized World Champion trophy presentation. After ending a qualifying championship, choose a public name and whether to post to the global top 100. F2 / gamepad X toggles remembered local-only; Escape/B keeps this score local. Only name, points, run category and version are sent. Scores and champion badges are self-reported, not verified. Offline posts are dropped silently. No local score history or save slots are uploaded.
 
 Version 0.7.1 adds the AI game-type grid. Select a competitive game, enter your name and start the Amateur tour; no rank or opponent selection is needed. Practice is disabled in AI because it is free play without an opponent. Saved tournaments remember their game; older 8-ball saves still load as 8-ball. Local records and save rows show the game type. The existing online board remains 8-ball only; other championship types do not post to that board.
+
+Version 0.7.2 uses consistent ball sizes and table framing in all ten modes. Existing manual saves retain their original geometry until the next frame starts.
