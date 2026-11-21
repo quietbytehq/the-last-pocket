@@ -23,20 +23,24 @@ var history: Array[String] = []
 var match_over = false
 var consecutive_fouls = [0,0]
 
-func configure(index: int, sim) -> void:
+func configure(index: int, sim, layout: int=1) -> void:
  mode=index; player=0; scores=[0,0]; groups=[-1,-1];winner=-1
  match_over=false;consecutive_fouls=[0,0]; ball_in_hand=true;baulk_only=false;free_shot=false;break_shot=true
  phase="red";nominated=7;clearance=2;called_ball=-1;called_pocket=-1;history.clear()
- sim.balls.clear();sim.shot.clear()
+ sim.balls.clear();sim.shot.clear();sim.layout_version=layout
  sim.half_size=Vector2(1.27,0.635);sim.radius=0.0475;sim.pocket_radius=0.067;sim.pocketed_table=true;sim.friction=0.19
- if mode==4:
-  sim.half_size=Vector2(0.915,0.4575);sim.radius=0.0342;sim.pocket_radius=0.055
- elif is_snooker():
-  sim.half_size=Vector2(1.785,0.889);sim.radius=0.02625;sim.pocket_radius=0.055;sim.friction=0.16
- elif is_carom():
-  sim.half_size=Vector2(1.42,0.71);sim.radius=0.03075;sim.pocketed_table=false;sim.friction=0.12
+ # One arcade scale keeps every discipline readable and aiming consistent.
+ if is_snooker():sim.friction=0.16
+ elif is_carom():sim.pocketed_table=false;sim.friction=0.12
+ if layout==0:
+  if mode==4:
+   sim.half_size=Vector2(0.915,0.4575);sim.radius=0.0342;sim.pocket_radius=0.055
+  elif is_snooker():
+   sim.half_size=Vector2(1.785,0.889);sim.radius=0.02625;sim.pocket_radius=0.055
+  elif is_carom():
+   sim.half_size=Vector2(1.42,0.71);sim.radius=0.03075
  if is_carom():
-  sim.add_ball(0,Vector2(-0.71,0.18));sim.add_ball(16,Vector2(-0.71,-0.18));sim.add_ball(3,Vector2(0.71,0))
+  sim.add_ball(0,Vector2(-sim.half_size.x*0.5,0.18));sim.add_ball(16,Vector2(-sim.half_size.x*0.5,-0.18));sim.add_ball(3,Vector2(sim.half_size.x*0.5,0))
   ball_in_hand=false;target=10 if mode==7 else 5
  elif is_snooker():
   var reds =15 if mode==5 else 6
@@ -47,7 +51,7 @@ func configure(index: int, sim) -> void:
   var id =101
   for row in range(rows):
    for k in range(row+1):
-    sim.add_ball(id,Vector2(sim.half_size.x*0.43+sim.radius*2.08+row*sim.radius*1.74,(k-row*0.5)*sim.radius*2.02));id+=1
+    sim.add_ball(id,Vector2(spots[6].x+sim.radius*2.08+row*sim.radius*1.74,(k-row*0.5)*sim.radius*2.02));id+=1
   baulk_only=true
  else:
   sim.add_ball(0,Vector2(-sim.half_size.x*0.58,0))
@@ -99,7 +103,7 @@ func lowest(sim) -> int:
  return value if value!=1000 else -1
 func colour_spots(sim) -> Dictionary:
  var h: Vector2=sim.half_size
- return {2:Vector2(-h.x*0.58,h.y*0.35),3:Vector2(-h.x*0.58,-h.y*0.35),4:Vector2(-h.x*0.58,0),5:Vector2.ZERO,6:Vector2(h.x*0.43,0),7:Vector2(h.x*0.81,0)}
+ return {2:Vector2(-h.x*0.58,h.y*0.35),3:Vector2(-h.x*0.58,-h.y*0.35),4:Vector2(-h.x*0.58,0),5:Vector2.ZERO,6:Vector2(h.x*(0.43 if sim.layout_version==0 else 0.20),0),7:Vector2(h.x*0.81,0)}
 func is_placement_legal(p: Vector2,sim) -> bool:
  if not sim.can_place(p,cue_id()): return false
  if is_snooker() and baulk_only:

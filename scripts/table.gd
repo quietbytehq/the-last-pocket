@@ -80,7 +80,7 @@ func configure(physics,game_rules) -> void:
  sim=physics;rules=game_rules
  if is_instance_valid(geometry): geometry.free()
  if is_instance_valid(actors): actors.free()
- baked_table=sim.pocketed_table
+ baked_table=true # Pocketless artwork uses the same camera and cloth bounds.
  room_environment.background_mode=Environment.BG_COLOR if baked_table else Environment.BG_SKY
  room_environment.background_color=Color.BLACK
  room_environment.reflected_light_source=Environment.REFLECTION_SOURCE_SKY
@@ -252,7 +252,7 @@ func _baked_background(h: Vector2) -> void:
  mesh.size=Vector2(width,width/(1672.0/941.0)/cosine)
  var material=StandardMaterial3D.new()
  material.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED
- material.albedo_texture=load("res://assets/table/club-table-v2.png" if upgrade==0 else "res://assets/table/tier_%d.png" % upgrade)
+ material.albedo_texture=load("res://assets/table/carom_%d.png" % upgrade if rules.is_carom() else ("res://assets/table/club-table-v2.png" if upgrade==0 else "res://assets/table/tier_%d.png" % upgrade))
  material.texture_filter=BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
  var node=MeshInstance3D.new();node.mesh=mesh;node.material_override=material
  node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF

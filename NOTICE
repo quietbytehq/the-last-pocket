@@ -20,3 +20,7 @@ QuietByte and included with permission for public distribution within
 The Last Pocket. This recording is not covered by the Apache-2.0 source-code
 licence and is not licensed for separate reuse or redistribution as audio.
 The project owner confirmed public redistribution rights on 14 November 2026.
+
+Pocketless carom table plates (assets/table/carom_0.png through carom_3.png):
+AI-generated derivatives of the original QuietByte table artwork using built-in
+image_gen, 2026-11-21. Apache-2.0. Prompts: docs/carom-art-prompts.json.

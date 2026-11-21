@@ -81,6 +81,8 @@ func run():
   game.start_match(mode)
   check(game.table.ball_nodes.size()==game.sim.balls.size(),"Packaged mode actors %d" % mode)
   check(not game.sim.balls.is_empty(),"Packaged mode has balls %d" % mode)
+  check(game.sim.half_size==Vector2(1.27,0.635) and is_equal_approx(game.sim.radius,0.0475),"Consistent packaged scale %d" % mode)
+  check(game.table.baked_table and game.table.camera.projection==Camera3D.PROJECTION_ORTHOGONAL,"Matching table framing %d" % mode)
   await get_tree().process_frame
  game.start_match(0);game.rules.ball_in_hand=false;game.sim.place(0,Vector2(-0.82,0.025));game.aim=Vector2.RIGHT;game.power=0.85;game.strike()
  print("PACKAGED QA: sampling pool")
@@ -90,13 +92,21 @@ func run():
  game.ui.help_panel.visible=false
  draw_frame()
  if qa_dir!="":viewport.get_texture().get_image().save_png(qa_dir.path_join("packaged-pool.png"))
- game.start_match(5);game.rules.ball_in_hand=false;game.sim.place(0,Vector2(-1.27,0));game.aim=Vector2.RIGHT;game.power=0.8;game.strike()
+ game.start_match(5);game.rules.ball_in_hand=false;game.sim.place(0,Vector2(-game.sim.half_size.x*0.7,0.12));game.aim=Vector2.RIGHT;game.power=0.8;game.strike()
  print("PACKAGED QA: sampling snooker")
  var snooker=await sample(360)
  check(snooker.draw_calls>0 and snooker.rendered_frames>=350,"Snooker benchmark performed real GPU draws")
  check(snooker.fps>=59.0,"Packaged snooker meets 60 fps target on development laptop")
  if qa_dir!="":
   draw_frame();viewport.get_texture().get_image().save_png(qa_dir.path_join("packaged-snooker.png"))
+ for tier in range(4):check(ResourceLoader.exists("res://assets/table/carom_%d.png" % tier),"Pocketless table %d is embedded" % tier)
+ game.start_match(8);game.rules.ball_in_hand=false;game.aim=Vector2(1,-0.3).normalized();game.power=0.8;game.strike()
+ print("PACKAGED QA: sampling carom")
+ var carom=await sample(360)
+ check(carom.draw_calls>0 and carom.rendered_frames>=350,"Carom benchmark performed real GPU draws")
+ check(carom.fps>=59.0,"Packaged carom meets 60 fps target on development laptop")
+ if qa_dir!="":
+  draw_frame();viewport.get_texture().get_image().save_png(qa_dir.path_join("packaged-carom.png"))
  game.launch_tournament("QA PLAYER");game.campaign.rival_index=47;game.campaign.wins=47;game._start_ai_frame();game.begin_frame()
  print("PACKAGED QA: sampling GOAT AI match")
  var versus_ai=await sample(360)
@@ -107,7 +117,7 @@ func run():
   draw_frame();viewport.get_texture().get_image().save_png(qa_dir.path_join("packaged-goat-ai.png"))
   var file=FileAccess.open(qa_dir.path_join("packaged-performance.json"),FileAccess.WRITE)
   file.store_string(JSON.stringify({"measurement":"Normal presented window" if presented else "Forced offscreen GPU render; frame_limit and render_scale recorded separately",
-   "quality":"High" if game.high_quality else "Performance","frame_limit":Engine.max_fps,"render_scale":viewport.scaling_3d_scale,"renderer":RenderingServer.get_video_adapter_name(),"resolution":DisplayServer.window_get_size(),"pool":pool,"snooker":snooker,"versus_ai":versus_ai,"checks":checks,"failures":failures},"\t"));file.close()
- print("PACKAGED BUILD: ","PASS" if failures==0 else "FAIL"," · ",checks," checks · pool ",pool.fps," fps · snooker ",snooker.fps," fps · AI ",versus_ai.fps," fps")
+   "quality":"High" if game.high_quality else "Performance","frame_limit":Engine.max_fps,"render_scale":viewport.scaling_3d_scale,"renderer":RenderingServer.get_video_adapter_name(),"resolution":DisplayServer.window_get_size(),"pool":pool,"snooker":snooker,"carom":carom,"versus_ai":versus_ai,"checks":checks,"failures":failures},"\t"));file.close()
+ print("PACKAGED BUILD: ","PASS" if failures==0 else "FAIL"," · ",checks," checks · pool ",pool.fps," fps · snooker ",snooker.fps," fps · carom ",carom.fps," fps · AI ",versus_ai.fps," fps")
  await game.prepare_to_close()
  get_tree().quit(0 if failures==0 else 1)

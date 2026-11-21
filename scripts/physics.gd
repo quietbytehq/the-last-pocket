@@ -5,6 +5,8 @@ const RESTITUTION := 0.96
 const RAIL_RESTITUTION := 0.78
 const STOP_SPEED := 0.009
 var balls: Array[Dictionary] = []
+# Saved frames retain their layout until the next frame starts.
+var layout_version = 1
 var half_size = Vector2(1.27, 0.635)
 var radius = 0.028575
 var pocket_radius = 0.067

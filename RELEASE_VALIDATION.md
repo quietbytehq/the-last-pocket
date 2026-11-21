@@ -22,3 +22,11 @@ All nine competitive modes passed 103 focused assertions: mode startup, Amateur 
 Practice remains solo. Championship saves retain the selected game; old saves default to 8-ball. Local record rows include the game type, while the existing public online board remains 8-ball only. No Worker redeployment is required.
 
 The final 0.7.1 Linux export passed all 55 runtime checks. New 1080p averages: pool 59.69 fps, snooker 60.00 fps and GOAT AI 59.37 fps. The 0.7.1 local Snap is assembled from the installed runtime and this tested export, as described above; installation/publication require normal-terminal Snap commands because this session has NoNewPrivs set.
+
+## Consistent arcade scale — 0.7.2
+
+All 19 source suites passed (19,565 assertions, zero failures). New scale coverage includes all ten game types, matching projected ball diameter and cloth bounds, mesh/collision agreement, real collisions, and old/new save round trips. Old save geometry is carried through AI snapshots and subsequent saves; new frames use the common arcade dimensions. The snooker triangle and pink spot were repositioned to keep the enlarged balls clear.
+
+The compiled Linux export passed 81 runtime checks at 1920×1080 on Mesa Intel RPL-P, Performance preset, full render scale, with real offscreen GPU draws. Average pool 59.89 fps, snooker 59.80 fps, carom 60.00 fps, GOAT AI 59.81 fps. Some individual frames exceed 16.67 ms; these averages are not a guarantee for other hardware. Four pocketless tier plates were generated with built-in image_gen; prompts and licence are recorded in docs/carom-art-prompts.json and NOTICE. Rendered snooker and carom screens were visually inspected. No Worker changes or deployment are required.
+
+The Linux build is updated locally. Snap installation and Store upload require normal-terminal commands because this agent process cannot acquire the privileges required by Snap/sudo. The new Snap uses the installed runtime/support files and the tested 0.7.2 executable, with metadata updated from the canonical recipe.

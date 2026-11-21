@@ -513,7 +513,7 @@ func snapshot_match() -> Dictionary:
  var phase=ui.save_return if state=="saves" else state
  if phase=="paused":phase=pause_origin
  if campaign.kind!="tournament" or phase not in ["aim","rolling","intro","result"]:return {}
- var data={"version":5,"saved_by":campaign.human_name,"saved_at_utc":int(Time.get_unix_time_from_system()),"saved_at_local":Time.get_datetime_string_from_system(false,true),"utc_offset_minutes":int(Time.get_time_zone_from_system().bias),"pocketed_by":pocketed_by.duplicate(true),"session":campaign.snapshot(),"ui_state":phase,"rules":{},"balls":sim.balls.duplicate(true),"aim":aim,"aim_locked":aim_locked,"power":power,"spin":spin,"placement":placements,"stationary_time":stationary_time,"physics_elapsed":sim.elapsed,"shot":sim.shot.duplicate(true),"before":before.duplicate(true)}
+ var data={"version":5,"layout_version":sim.layout_version,"saved_by":campaign.human_name,"saved_at_utc":int(Time.get_unix_time_from_system()),"saved_at_local":Time.get_datetime_string_from_system(false,true),"utc_offset_minutes":int(Time.get_time_zone_from_system().bias),"pocketed_by":pocketed_by.duplicate(true),"session":campaign.snapshot(),"ui_state":phase,"rules":{},"balls":sim.balls.duplicate(true),"aim":aim,"aim_locked":aim_locked,"power":power,"spin":spin,"placement":placements,"stationary_time":stationary_time,"physics_elapsed":sim.elapsed,"shot":sim.shot.duplicate(true),"before":before.duplicate(true)}
  for key in SAVED_RULE_FIELDS:data.rules[key]=rules.get(key).duplicate(true) if rules.get(key) is Array else rules.get(key)
  return data
 
@@ -537,7 +537,7 @@ func load_slot(index: int) -> bool:
  var data=_read_slot(index)
  if data.get("version",0)!=5 or not _valid_save(data):return false
  _invalidate_ai();_join_ai();_stop_spoken();campaign.restore(data.session);ai_mode=int(data.rules.mode)
- table.upgrade=campaign.tier();rules.configure(data.rules.mode,sim)
+ table.upgrade=campaign.tier();rules.configure(data.rules.mode,sim,int(data.get("layout_version",0)))
  for key in SAVED_RULE_FIELDS:rules.set(key,data.rules[key])
  sim.balls.assign(data.balls);sim.shot=data.shot.duplicate(true);sim.elapsed=float(data.physics_elapsed);sim.collisions.clear()
  before=data.before.duplicate(true);stationary_time=float(data.stationary_time)
@@ -587,7 +587,8 @@ func _valid_save(data) -> bool:
  if saved.nominated<2 or saved.nominated>7 or saved.clearance<2 or saved.clearance>8: return false
  if saved.called_ball< -1 or saved.called_ball>115 or saved.called_pocket< -1 or saved.called_pocket>5: return false
  if saved.target<1 or saved.target>1000 or not saved.get("message") is String or saved.message.length()>500: return false
- var expected_sim=Physics.new();var expected_rules=Rules.new();expected_rules.configure(mode,expected_sim)
+ if not data.get("layout_version",0) is int or data.get("layout_version",0) not in [0,1]:return false
+ var expected_sim=Physics.new();var expected_rules=Rules.new();expected_rules.configure(mode,expected_sim,int(data.get("layout_version",0)))
  if data.balls.size()!=expected_sim.balls.size(): return false
  var ids=[]
  for b in data.balls:

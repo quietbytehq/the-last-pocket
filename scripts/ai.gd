@@ -3,7 +3,7 @@ extends RefCounted
 const Physics=preload("res://scripts/physics.gd")
 const Rules=preload("res://scripts/rules.gd")
 static func snapshot(sim,rules) -> Dictionary:
- var data={"mode":rules.mode,"balls":sim.balls.duplicate(true),"rules":{}}
+ var data={"mode":rules.mode,"layout_version":sim.layout_version,"balls":sim.balls.duplicate(true),"rules":{}}
  for key in ["player","groups","break_shot","ball_in_hand","baulk_only","phase","clearance","free_shot"]:data.rules[key]=rules.get(key)
  return data
 static func legal_targets(sim,rules) -> Array:
@@ -105,7 +105,7 @@ static func error_degrees(skill: float) -> float:
  var tier=clampi(int(skill),0,3)
  return lerpf(levels[tier],levels[tier+1],clampf(skill-tier,0,1))
 static func plan(data: Dictionary,skill: float,seed_value: int) -> Dictionary:
- var sim=Physics.new();var rules=Rules.new();rules.configure(int(data.mode),sim)
+ var sim=Physics.new();var rules=Rules.new();rules.configure(int(data.mode),sim,int(data.get("layout_version",0)))
  for key in data.rules:rules.set(key,data.rules[key])
  sim.balls.assign(data.balls.duplicate(true))
  var rng=RandomNumberGenerator.new();rng.seed=seed_value
@@ -142,7 +142,7 @@ static func _carom_plan(sim,rules,skill: float) -> Dictionary:
  var count=16+int(skill*18)
  var best={"aim":(sim.ball(targets[0]).p-cue.p).normalized(),"power":0.65,"ball":targets[0],"pocket":-1,"rating":-1000.0,"bank":false}
  for i in range(count):
-  var candidate=Physics.new();var copy_rules=Rules.new();copy_rules.configure(rules.mode,candidate);candidate.balls.assign(sim.balls.duplicate(true))
+  var candidate=Physics.new();var copy_rules=Rules.new();copy_rules.configure(rules.mode,candidate,sim.layout_version);candidate.balls.assign(sim.balls.duplicate(true))
   var angle=TAU*i/count
   var aim=Vector2(cos(angle),sin(angle));var power=0.5+float(i%3)*0.2
   candidate.begin_shot(rules.cue_id(),aim,0.35+power*5.1,Vector2.ZERO)

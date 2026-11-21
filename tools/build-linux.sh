@@ -19,6 +19,6 @@ cp docs/table-v2-prompt.txt build/TheLastPocket/docs/
 cp docs/current-build.png build/TheLastPocket/preview.png
 
 cp docs/RIVAL_VOICE_LINES.csv docs/RIVAL_RESULT_VOICE_LINES.csv build/TheLastPocket/docs/
-cp docs/campaign-art-prompts.json docs/result-art-prompts.json docs/championship-art-prompts.json build/TheLastPocket/docs/
+cp docs/campaign-art-prompts.json docs/result-art-prompts.json docs/championship-art-prompts.json docs/carom-art-prompts.json build/TheLastPocket/docs/
 
 cp assets/audio/music.mp3 build/TheLastPocket/audio/music.mp3

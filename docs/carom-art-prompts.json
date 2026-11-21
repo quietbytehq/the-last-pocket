@@ -1,0 +1,27 @@
+{
+  "tool": "Built-in image_gen",
+  "date": "2026-11-21",
+  "license": "Apache-2.0",
+  "assets": [
+    {
+      "file": "assets/table/carom_0.png",
+      "reference": "assets/table/club-table-v2.png",
+      "prompt": "Use case: precise-object-edit. Asset: playable billiards table background plate. Edit target: supplied green pool table. Make a pocketless CAROM table by removing ALL SIX black pockets and their metal pocket surrounds, replacing with continuous green cushions and matching polished walnut rails. EXACTLY preserve image aspect ratio, table position, camera projection, cloth rectangle bounds, table outer silhouette, room background, lighting and realistic felt/wood textures. The inner cloth rectangle must remain exactly where it was; cushions make four straight unbroken sides and join neatly at 90 degree corners. No holes anywhere. No balls, cue, people, text, markings or UI. Minimal edit only: fill six pockets naturally; keep all other pixels/composition as close as possible."
+    },
+    {
+      "file": "assets/table/carom_1.png",
+      "reference": "assets/table/tier_1.png",
+      "prompt": "Use case: precise-object-edit. Asset: playable billiards table background plate. Edit target: supplied tier 1 pool table. Make a pocketless CAROM table by removing ALL SIX black pockets and their metal pocket surrounds, replacing with continuous matching-colour cushions and matching polished rails in the original tier's material. EXACTLY preserve image aspect ratio, table position, camera projection, cloth rectangle bounds, table outer silhouette, room background, lighting and original cloth COLOUR and realistic felt/wood/marble textures. The inner cloth rectangle must remain exactly where it was; cushions make four straight unbroken sides and join neatly at 90 degree corners. No holes anywhere. No balls, cue, people, text, markings or UI. Minimal edit only: fill six pockets naturally; keep all other pixels/composition as close as possible."
+    },
+    {
+      "file": "assets/table/carom_2.png",
+      "reference": "assets/table/tier_2.png",
+      "prompt": "Use case: precise-object-edit. Asset: playable billiards table background plate. Edit target: supplied tier 2 pool table. Make a pocketless CAROM table by removing ALL SIX black pockets and their metal pocket surrounds, replacing with continuous matching-colour cushions and matching polished rails in the original tier's material. EXACTLY preserve image aspect ratio, table position, camera projection, cloth rectangle bounds, table outer silhouette, room background, lighting and original cloth COLOUR and realistic felt/wood/marble textures. The inner cloth rectangle must remain exactly where it was; cushions make four straight unbroken sides and join neatly at 90 degree corners. No holes anywhere. No balls, cue, people, text, markings or UI. Minimal edit only: fill six pockets naturally; keep all other pixels/composition as close as possible."
+    },
+    {
+      "file": "assets/table/carom_3.png",
+      "reference": "assets/table/tier_3.png",
+      "prompt": "Use case: precise-object-edit. Asset: playable billiards table background plate. Edit target: supplied tier 3 pool table. Make a pocketless CAROM table by removing ALL SIX black pockets and their metal pocket surrounds, replacing with continuous matching-colour cushions and matching polished rails in the original tier's material. EXACTLY preserve image aspect ratio, table position, camera projection, cloth rectangle bounds, table outer silhouette, room background, lighting and original cloth COLOUR and realistic felt/wood/marble textures. The inner cloth rectangle must remain exactly where it was; cushions make four straight unbroken sides and join neatly at 90 degree corners. No holes anywhere. No balls, cue, people, text, markings or UI. Minimal edit only: fill six pockets naturally; keep all other pixels/composition as close as possible."
+    }
+  ]
+}
