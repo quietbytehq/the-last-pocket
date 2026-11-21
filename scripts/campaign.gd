@@ -3,6 +3,7 @@ const TIERS=["Amateur","Professional","Master","GOAT"]
 const EQUIPMENT=["House maple · club oak","Carbon Pro · polished walnut","Rosewood Master · mahogany & brass","Onyx Elite · ebony & engraved gold"]
 var roster: Array=[]
 var kind="local"
+var game_mode=0
 var rival_index=0
 var quick_tier=0
 var diamonds=3
@@ -23,7 +24,8 @@ func _init():
 func tier() -> int:return clampi(rival_index/12 if kind=="tournament" else quick_tier,0,3)
 func rival() -> Dictionary:return roster[clampi(rival_index,0,47)]
 func skill() -> float:return tier()+float(rival_index%12)/12.0
-func start_tournament(player_name: String):
+func start_tournament(player_name: String,mode: int=0):
+ game_mode=clampi(mode,0,8)
  losses.resize(48);losses.fill(0)
  kind="tournament";rival_index=0;quick_tier=0;diamonds=3;points=0;wins=0;shots=0
  human_name=clean_name(player_name);last_won=false;finished=false;recorded=false;phase="intro"
@@ -54,10 +56,11 @@ static func clean_name(value: String) -> String:
  return name if not name.is_empty() else "PLAYER 1"
 func snapshot() -> Dictionary:
  var data={}
- for key in ["kind","rival_index","quick_tier","diamonds","points","wins","shots","human_name","last_won","finished","recorded","phase","run_id","losses"]:data[key]=get(key).duplicate() if get(key) is Array else get(key)
+ for key in ["kind","game_mode","rival_index","quick_tier","diamonds","points","wins","shots","human_name","last_won","finished","recorded","phase","run_id","losses"]:data[key]=get(key).duplicate() if get(key) is Array else get(key)
  return data
 func valid(data) -> bool:
  if not data is Dictionary:return false
+ if not data.get("game_mode",0) is int or data.get("game_mode",0)<0 or data.get("game_mode",0)>8:return false
  if data.get("kind","") not in ["local","tournament"]:return false
  for key in ["rival_index","quick_tier","diamonds","points","wins","shots"]:
   if not data.get(key) is int:return false
@@ -78,6 +81,7 @@ func valid(data) -> bool:
  return true
 func restore(data) -> bool:
  if not valid(data):return false
+ game_mode=int(data.get("game_mode",0))
  losses.resize(48);losses.fill(0)
  for key in data:
   if key in snapshot():set(key,data[key])

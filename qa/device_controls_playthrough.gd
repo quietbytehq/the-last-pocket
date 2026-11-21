@@ -27,7 +27,11 @@ func run():
  check(viewport.gui_get_focus_owner().text.contains("VERSUS AI"),"D-pad selects versus AI")
  pad(JOY_BUTTON_A);await frames(3)
  check(game.ui.menu_page=="ai","Gamepad activates menu")
- pad(JOY_BUTTON_DPAD_DOWN);pad(JOY_BUTTON_DPAD_DOWN);await frames(2);pad(JOY_BUTTON_A);await frames(4)
+ for i in range(12):
+  var focused=viewport.gui_get_focus_owner()
+  if focused is Button and focused.text.contains("START AMATEUR TOUR"):break
+  pad(JOY_BUTTON_DPAD_LEFT if focused is Button and focused.text.contains("LOAD TOURNAMENT") else JOY_BUTTON_DPAD_DOWN);await frames(2)
+ pad(JOY_BUTTON_A);await frames(4)
  check(game.state=="intro","Gamepad enters championship without mouse")
  pad(JOY_BUTTON_A);await frames(4)
  check(game.state=="aim" and game.rules.ball_in_hand,"Gamepad begins frame")

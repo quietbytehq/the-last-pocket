@@ -1,4 +1,4 @@
-# Release verification — 0.7.0
+# Release verification — 0.7.1
 
 - The original 16 source suites plus the new champion/online suite passed: 19,628 assertions, zero failures. These cover rules, AI, manual saves, controls, all 48 rivals and the new ending/posting flow.
 - New native title/ending/privacy playthrough: 9/9 checks passed. Title-only group art, final-win trophy scene, player name, Continue, champion share offer, F2/local-only and no unintended HTTP request were exercised with viewport key and mouse events. Rendered title, corrected trophy handover and privacy screens were visually inspected.
@@ -14,3 +14,11 @@
 Scores and World Champion claims are self-reported, not verified. Open source and a public submission endpoint allow made-up scores and name impersonation. Validation, rate limiting and moderation deter junk, not determined cheating. No extra play-time or completion-versus-score check was introduced. Manual saves stay local; the global service gets only chosen name, points, category and game version, after explicit confirmation.
 
 The new local Snap is assembled with snap pack using the existing installed 0.6.1 runtime/support files and the freshly tested 0.7.0 game, updated metadata and network plug. This session cannot invoke Snapcraft's confined builder; the checked-in canonical recipe remains available via tools/build-snap.sh on a normal Snapcraft/LXD environment. Package/game hashes are compared before installation/publication. Installation and Store publication status are reported separately.
+
+## AI game selection — 0.7.1
+
+All nine competitive modes passed 103 focused assertions: mode startup, Amateur defaults, save/load of introductions and in-flight shots, actual AI plan execution, correct carom cue, rival advancement, legacy 8-ball restoration and exclusion of non-8-ball games from the existing global board. Native mouse playthrough passed 11 checks for the grid and launching 9-ball, snooker and three-cushion; the screen was visually inspected. The full source suite passed 19,731 assertions across 18 suites, with zero failures. These tests do not claim a full manual 48-rival playthrough in each game.
+
+Practice remains solo. Championship saves retain the selected game; old saves default to 8-ball. Local record rows include the game type, while the existing public online board remains 8-ball only. No Worker redeployment is required.
+
+The final 0.7.1 Linux export passed all 55 runtime checks. New 1080p averages: pool 59.69 fps, snooker 60.00 fps and GOAT AI 59.37 fps. The 0.7.1 local Snap is assembled from the installed runtime and this tested export, as described above; installation/publication require normal-terminal Snap commands because this session has NoNewPrivs set.

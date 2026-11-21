@@ -27,6 +27,9 @@ var play_kind="local"
 var front_music: Button
 var front_effects: Button
 var press_hint: Label
+var selected_ai_mode=0
+var ai_mode_buttons: Array[Button]=[]
+var ai_mode_note: Label
 var ai_name: LineEdit
 var save_game_button: Button
 var save_shade: ColorRect
@@ -281,7 +284,8 @@ func _refresh_slots() -> void:
   elif not info.valid:button.text="%02d   ·   UNREADABLE SAVE%s" % [info.index+1," — select to replace" if save_mode=="save" else ""]
   else:
    var bias=int(info.offset);var offset="UTC%s%02d:%02d" % ["+" if bias>=0 else "-",absi(bias)/60,absi(bias)%60]
-   button.text="%02d   ·   %s    |    %s (%s)    |    %s · Frame %02d / 48" % [info.index+1,info.player,info.timestamp,offset,game.Campaign.TIERS[int(info.tier)],info.frame]
+   var mode_tag=["8B","9B","10B","STRAIGHT","BLACKBALL","SNOOKER","6-RED","CAROM","3-CUSHION"][info.mode]
+   button.text="%02d · %s | %s (%s) | %s · %s · %02d/48" % [info.index+1,info.player,info.timestamp,offset,mode_tag,game.Campaign.TIERS[int(info.tier)],info.frame]
   if pending_slot==info.index:button.text="%02d   ·   CONFIRM REPLACE THIS SAVE — CLICK AGAIN" % (info.index+1)
 
 func _choose_slot(index: int) -> void:
@@ -524,17 +528,23 @@ func _make_frontend():
  _icon_button("  TOP TEN", "chart",Vector2(940,485),Vector2(228,55),show_board,hub_page)
  _icon_button("  QUIT", "close",Vector2(1183,485),Vector2(227,55),func():game.quit_game(),hub_page)
  _icon_button("  LOAD TOURNAMENT","chart",Vector2(940,562),Vector2(470,53),func():show_saves("load"),hub_page)
- ai_page=_page_panel(Vector2(800,145),Vector2(710,620))
- var ai_heading=_label("THE CHAMPIONSHIP",Vector2(36,30),31,ai_page,GOLD);ai_heading.add_theme_font_override("font",bold)
- _icon_button(" BACK","back",Vector2(540,27),Vector2(135,43),show_hub,ai_page)
- _wrapped("Every journey starts in Amateur. Win each frame to rise through the ranks.",Vector2(37,94),Vector2(625,62),21,ai_page,LIGHT)
- _label("YOUR NAME",Vector2(38,184),14,ai_page,DIM)
- ai_name=LineEdit.new();ai_name.position=Vector2(36,211);ai_name.size=Vector2(637,48);ai_name.max_length=18;ai_name.text="PLAYER 1";ai_page.add_child(ai_name)
- _icon_button("  START AMATEUR TOUR","trophy",Vector2(36,289),Vector2(637,72),func():game.launch_tournament(ai_name.text),ai_page)
- _icon_button("  LOAD TOURNAMENT","chart",Vector2(36,383),Vector2(637,54),func():show_saves("load"),ai_page)
- _wrapped("Saving is your choice: Pause → Save tournament.
-Ten named slots. No automatic saves.",Vector2(38,451),Vector2(625,65),19,ai_page,GOLD)
- _wrapped("Rivals are revealed as you meet them. Three diamonds give you another chance.",Vector2(38,540),Vector2(625,53),17,ai_page,DIM)
+ ai_page=_page_panel(Vector2(290,55),Vector2(1020,790))
+ var ai_heading=_label("VERSUS AI · CHOOSE YOUR GAME",Vector2(36,25),30,ai_page,GOLD);ai_heading.add_theme_font_override("font",bold)
+ _icon_button(" BACK","back",Vector2(840,23),Vector2(144,43),show_hub,ai_page)
+ _label("New championships start in Amateur. Beat 48 rivals to become World Champion.",Vector2(38,88),18,ai_page,LIGHT)
+ for i in range(game.rules.MODES.size()):
+  var index=i
+  var button=_button(game.rules.MODES[i],Vector2(38+(i%2)*480,140+(i/2)*60),Vector2(464,49),func():_select_ai_mode(index),ai_page)
+  button.disabled=i==9;button.tooltip_text="Practice is solo free play, with no AI opponent." if i==9 else "Start a "+game.rules.MODES[i]+" championship"
+  ai_mode_buttons.append(button)
+ ai_mode_note=_wrapped("",Vector2(38,451),Vector2(944,48),17,ai_page,DIM)
+ _label("YOUR NAME",Vector2(38,505),14,ai_page,DIM)
+ ai_name=LineEdit.new();ai_name.position=Vector2(36,535);ai_name.size=Vector2(944,50);ai_name.max_length=18;ai_name.text="PLAYER 1";ai_page.add_child(ai_name)
+ _icon_button("  START AMATEUR TOUR","trophy",Vector2(36,605),Vector2(595,60),func():game.launch_tournament(ai_name.text,selected_ai_mode),ai_page)
+ _icon_button("  LOAD TOURNAMENT","chart",Vector2(653,605),Vector2(327,60),func():show_saves("load"),ai_page)
+ _wrapped("Ten manual save slots · Three retry diamonds · Future rivals stay hidden.
+Global ranking covers 8-ball championships; other game types keep local records.",Vector2(38,699),Vector2(944,60),17,ai_page,DIM)
+ _select_ai_mode(0)
  intro_panel=_page_panel(Vector2(220,95),Vector2(1160,720))
  intro_art=_art(Vector2(32,90),Vector2(440,570),intro_panel)
  intro_rank=_label("",Vector2(520,53),17,intro_panel,GOLD)
@@ -597,7 +607,7 @@ func show_ai():
 func show_intro():
  var rival=game.campaign.rival();intro_art.texture=_portrait(rival)
  var tier=game.campaign.tier()
- intro_rank.text="%s  /  RIVAL %02d OF 12" % [game.Campaign.TIERS[tier].to_upper(),int(rival.slot)+1]
+ intro_rank.text=game.rules.MODES[game.rules.mode]+" · %s / RIVAL %02d OF 12" % [game.Campaign.TIERS[tier].to_upper(),int(rival.slot)+1]
  intro_name.text=rival.name;intro_trait.text=rival.personality
  intro_quote.text='“'+str(rival.quote)+'”'
  intro_gear.text=game.Campaign.EQUIPMENT[tier]
@@ -642,7 +652,7 @@ func show_board():
   var line="%02d     —" % (i+1)
   if i<game.leaderboard.entries.size():
    var row=game.leaderboard.entries[i]
-   line="%02d     %s" % [i+1,row.name]
+   line="%02d   %s · %s" % [i+1,row.name,["8B","9B","10B","STRAIGHT","BLACKBALL","SNOOKER","6-RED","CAROM","3-CUSHION"][int(row.get("mode",0))]]
    board_wins[i].text="%02d / 48" % row.wins;board_points[i].text="%06d" % row.points
   if i>=game.leaderboard.entries.size():board_wins[i].text="";board_points[i].text=""
   board_rows[i].text=line
@@ -837,3 +847,9 @@ func finish_share(local_only: bool):
  if name.is_empty():name="PLAYER"
  game.finish_online_share(name,local_only)
  share_shade.visible=false
+
+func _select_ai_mode(index: int):
+ if index<0 or index>8:return
+ selected_ai_mode=index
+ for i in range(ai_mode_buttons.size()):ai_mode_buttons[i].modulate=GOLD if i==index else Color.WHITE
+ ai_mode_note.text=game.rules.NOTES[index]+(" · Eligible for the global 8-ball board." if index==0 else " · Local championship records.")

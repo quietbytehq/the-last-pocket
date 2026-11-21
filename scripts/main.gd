@@ -506,7 +506,7 @@ func list_save_slots() -> Array:
   var exists=FileAccess.file_exists(slot_path(index))
   var data=_read_slot(index) if exists else {}
   var valid=exists and _valid_save(data) and data.get("version",0)==5
-  slots.append({"index":index,"empty":not exists,"valid":valid,"player":data.get("saved_by","") if valid else "","timestamp":data.get("saved_at_local","") if valid else "","offset":data.get("utc_offset_minutes",0) if valid else 0,"frame":data.session.rival_index+1 if valid else 0,"tier":data.session.rival_index/12 if valid else 0})
+  slots.append({"index":index,"empty":not exists,"valid":valid,"player":data.get("saved_by","") if valid else "","timestamp":data.get("saved_at_local","") if valid else "","offset":data.get("utc_offset_minutes",0) if valid else 0,"frame":data.session.rival_index+1 if valid else 0,"mode":int(data.rules.mode) if valid else 0,"tier":data.session.rival_index/12 if valid else 0})
  return slots
 
 func snapshot_match() -> Dictionary:
@@ -613,7 +613,7 @@ func _valid_save(data) -> bool:
  return _valid_manual_snapshot(data)
 
 func _valid_manual_snapshot(data: Dictionary) -> bool:
- if data.session.kind!="tournament" or data.rules.mode!=0:return false
+ if data.session.kind!="tournament" or data.rules.mode!=data.session.get("game_mode",0):return false
  if data.get("saved_by")!=data.session.human_name or data.saved_by!=data.rules.names[0]:return false
  if not data.get("saved_at_utc") is int or data.saved_at_utc<=0:return false
  if not data.get("saved_at_local") is String or data.saved_at_local.length()!=19:return false
@@ -628,22 +628,25 @@ func _valid_manual_snapshot(data: Dictionary) -> bool:
  if data.ui_state=="rolling":
   if data.rules.match_over or data.session.phase!="playing":return false
   var shot=data.shot;var prior=data.before
-  if shot.get("cue",-1)!=0 or not shot.get("first") is int or shot.first< -1 or shot.first>15:return false
+  var ids=[]
+  for ball in data.balls:ids.append(ball.id)
+  var cue=16 if data.rules.mode in [7,8] and data.rules.player==1 else 0
+  if shot.get("cue",-1)!=cue or not shot.get("first") is int or shot.first not in ids+[-1]:return false
   for key in ["rails","cushions_at_second"]:
    if not shot.get(key) is int or shot[key]<0 or shot[key]>10000:return false
   for key in ["scratch","rail_after_contact"]:
    if not shot.get(key) is bool:return false
-  if not shot.get("potted") is Array or shot.potted.size()>16:return false
+  if not shot.get("potted") is Array or shot.potted.size()>data.balls.size():return false
   var seen=[]
   for pot in shot.potted:
-   if not pot is Dictionary or not pot.get("id") is int or pot.id<0 or pot.id>15 or pot.id in seen:return false
+   if not pot is Dictionary or not pot.get("id") is int or pot.id not in ids or pot.id in seen:return false
    if not pot.get("pocket") is int or pot.pocket<0 or pot.pocket>5:return false
    seen.append(pot.id)
   for key in ["targets","contacts"]:
    var values=prior.get(key) if key=="targets" else shot.get(key)
-   if not values is Array or values.size()>16:return false
+   if not values is Array or values.size()>data.balls.size():return false
    for id in values:
-    if not id is int or id<0 or id>15:return false
+    if not id is int or id not in ids:return false
   for key in ["group_left","reds","lowest"]:
    if not prior.get(key) is int or prior[key]< -1 or prior[key]>115:return false
   if prior.get("phase","") not in ["red","colour","clearance"] or not prior.get("free") is bool:return false
@@ -661,12 +664,13 @@ func start_local(mode: int):
  _close_previous_run()
  campaign.kind="local";campaign.phase="playing";campaign.finished=false
  start_match(mode);_music_context()
-func launch_tournament(player_name: String):
+func launch_tournament(player_name: String,mode: int=0):
+ if mode<0 or mode>8:return
  _close_previous_run()
- ai_mode=0;campaign.start_tournament(player_name);_start_ai_frame()
+ ai_mode=mode;campaign.start_tournament(player_name,mode);_start_ai_frame()
 func _start_ai_frame(voice_delay: float=0.35):
  rules.names=[campaign.human_name,campaign.rival().name]
- start_match(0 if campaign.kind=="tournament" else ai_mode)
+ start_match(campaign.game_mode if campaign.kind=="tournament" else ai_mode)
  # Alternate opening breaks across the roster. Human remains player one.
  rules.player=campaign.rival_index%2
  rules.message="%s breaks." % rules.names[rules.player]
@@ -713,7 +717,7 @@ func _record_run():
  if campaign.recorded or campaign.kind!="tournament":return
  campaign.recorded=true
  if not qa_mode:
-  if leaderboard.record(campaign.human_name,campaign.points,campaign.wins):_play_sound("new_record")
+  if leaderboard.record(campaign.human_name,campaign.points,campaign.wins,campaign.game_mode):_play_sound("new_record")
 func _invalidate_ai():
  ai_generation+=1;ai_delay=0;ai_result.clear()
 func _join_ai():
@@ -767,7 +771,7 @@ func _close_previous_run():
 
 func _prepare_score_offer():
  score_offer={}
- if campaign.kind=="tournament" and OnlineScores.qualifying(campaign.points):
+ if campaign.kind=="tournament" and campaign.game_mode==0 and OnlineScores.qualifying(campaign.points):
   score_offer={"name":campaign.human_name,"points":campaign.points,"champion":campaign.wins==48}
 func finish_online_share(player_name: String,local_only: bool):
  if not local_only and online_enabled and not score_offer.is_empty() and not qa_mode:

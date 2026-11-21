@@ -1,6 +1,6 @@
 # The Last Pocket
 
-A Linux cue-sports game with local two-player matches, AI rivals and a 48-frame comic-style championship.
+A Linux cue-sports game with local two-player matches, AI rivals and a 48-rival comic-style championship.
 
 ![Actual Linux title screen](docs/title-screen.png)
 
@@ -10,7 +10,7 @@ A Linux cue-sports game with local two-player matches, AI rivals and a 48-frame 
 
 Download the Linux archive from [GitHub Releases](https://github.com/quietbytehq/the-last-pocket/releases), extract it, then run `TheLastPocket/play.sh`. Godot is not required to play the exported build. The launcher selects native Wayland on Wayland desktops and otherwise uses the normal Linux display driver.
 
-The game starts fullscreen with a group portrait of the hero and his rivals beneath an ornate gold title. Press any key, then choose **Local Versus** or **Versus AI**. Local Versus offers ten modes. Versus AI is the championship: new runs always start in Amateur, and rivals are revealed one at a time. For a local match, choose a game, enter two names and select **Play Match**. In Local Versus, both players share the mouse and keyboard. In Versus AI, you are player one. Tournament progress is saved only when you choose **Save tournament**. The separate save menu has ten slots with the player name and local date/time. Use **Load tournament** to open a chosen save; active frames load paused until you choose **Resume play**. There is no automatic progress saving.
+The game starts fullscreen with a group portrait of the hero and his rivals beneath an ornate gold title. Press any key, then choose **Local Versus** or **Versus AI**. Local Versus offers ten modes. Versus AI offers nine competitive game types as championships: new runs always start in Amateur, and rivals are revealed one at a time. For a local match, choose a game, enter two names and select **Play Match**. In Local Versus, both players share the mouse and keyboard. In Versus AI, you are player one. Tournament progress is saved only when you choose **Save tournament**. The separate save menu has ten slots with the player name and local date/time. Use **Load tournament** to open a chosen save; active frames load paused until you choose **Resume play**. There is no automatic progress saving.
 
 ## Championship
 
@@ -123,3 +123,5 @@ Run `tools/build-snap.sh` with Snapcraft and an initialized LXD builder. The rec
 The complete bundled game is listed as Proprietary in store metadata because the music is licensed for distribution within the game, without separate reuse rights. The source code remains Apache-2.0. Font and engine terms are in NOTICE.
 
 To run the complete headless source suite: `tools/test.sh`. The script isolates test save/settings files from player data.
+
+Version 0.7.1 adds the AI game-type grid. Select a competitive game, enter your name and start the Amateur tour; no rank or opponent selection is needed. Practice is disabled in AI because it is free play without an opponent. Saved tournaments remember their game; older 8-ball saves still load as 8-ball. Local records and save rows show the game type. The existing online board remains 8-ball only; other championship types do not post to that board.

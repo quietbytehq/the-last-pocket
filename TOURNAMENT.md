@@ -1,6 +1,6 @@
 # The championship tour
 
-The title screen leads to **Local Versus** (two humans sharing this computer) or **Versus AI**. Local Versus keeps all ten cue-sport choices. Versus AI is exclusively the 8-ball championship. New runs begin in Amateur, with no skill or rival selector. Practice remains a local free-play option.
+The title screen leads to **Local Versus** (two humans sharing this computer) or **Versus AI**. Local Versus keeps all ten cue-sport choices. Versus AI starts with a game-type grid: 8-ball, 9-ball, 10-ball, straight pool, blackball, full/six-red snooker and both carom modes. Practice stays solo. The chosen game continues through all 48 rivals, saves and retries. New runs begin in Amateur, with no skill or rival selector. Practice remains a local free-play option.
 
 ## Four clubs, 48 rivals
 
@@ -48,3 +48,5 @@ Gameplay music is designed as calm, upscale hotel-lobby lounge music with subtle
 Open **Your journey** from a rival introduction or the wooden Pause menu. Load a tournament first to inspect its journey. The view shows the current rival and everyone already encountered, with portraits, rank, defeated/current status and repeat attempts. Future rival names, portraits and descriptions are not created in this view. A win does not reveal the next rival until you advance. Only reached ranks appear in the rank path.
 
 Manual slots use version 5 snapshots with integrity checks. Legacy automatic or earlier save formats are not loaded. The existing Godot user-data location is retained.
+
+Version 0.7.1 adds the AI game-type grid. Select a competitive game, enter your name and start the Amateur tour; no rank or opponent selection is needed. Practice is disabled in AI because it is free play without an opponent. Saved tournaments remember their game; older 8-ball saves still load as 8-ball. Local records and save rows show the game type. The existing online board remains 8-ball only; other championship types do not post to that board.

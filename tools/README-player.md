@@ -26,11 +26,11 @@ The championship has twelve rivals in each rank: Amateur, Professional, Master a
 
 Tournament progress is never saved automatically. Choose Save tournament from Pause, an introduction or a result card, then choose one of ten slots. Each slot shows the player name and local date/time. Overwriting asks you to click again. Load tournament opens a chosen save; a live frame starts paused until Resume play. A shot in motion can be saved and restored exactly. Old automatic saves are ignored.
 
-Local play has ten modes. Versus AI is the sequential 8-ball championship. These use the club rules and simplifications described in RULES.md, rather than a complete tournament-referee implementation.
+Local play has ten modes. Versus AI offers sequential championships in all nine competitive game types. These use the club rules and simplifications described in RULES.md, rather than a complete tournament-referee implementation.
 
 Original stereo impact placeholders are included. Put your personal MP3 effects and music in the `audio` subfolder, using the filenames in AUDIO_BRIEF.md, and restart. The supplied two-minute stereo hotel-lobby track is included. Gameplay is designed for calm hotel-lobby lounge music. Music and SFX have separate icons and Pause switches, plus N / M shortcuts.
 
-The Last Pocket 0.7.0 by QuietByte. Pocketed-table graphics use a detailed rendered table plate with live 3D balls, cue, shadows and interactive physics. The overhead view is fixed; carom retains the earlier 3D table.
+The Last Pocket 0.7.1 by QuietByte. Pocketed-table graphics use a detailed rendered table plate with live 3D balls, cue, shadows and interactive physics. The overhead view is fixed; carom retains the earlier 3D table.
 
 QuietByte · hello@quietbytehq.uk
 
@@ -56,3 +56,5 @@ sudo snap connect the-last-pocket:joystick
 The package declares only the game-controller input interface; it does not request general raw-input access. See [Snap controller access](https://snapcraft.io/docs/reference/interfaces/joystick-interface/).
 
 The title now shows the hero and rival cast together. Beat all 48 rivals to see the personalized World Champion trophy presentation. After ending a qualifying championship, choose a public name and whether to post to the global top 100. F2 / gamepad X toggles remembered local-only; Escape/B keeps this score local. Only name, points, run category and version are sent. Scores and champion badges are self-reported, not verified. Offline posts are dropped silently. No local score history or save slots are uploaded.
+
+Version 0.7.1 adds the AI game-type grid. Select a competitive game, enter your name and start the Amateur tour; no rank or opponent selection is needed. Practice is disabled in AI because it is free play without an opponent. Saved tournaments remember their game; older 8-ball saves still load as 8-ball. Local records and save rows show the game type. The existing online board remains 8-ball only; other championship types do not post to that board.

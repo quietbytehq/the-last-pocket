@@ -1,12 +1,13 @@
 name: the-last-pocket
 title: The Last Pocket
 base: core24
-version: '0.7.0'
+version: '0.7.1'
 summary: Pool and snooker with local versus and a 48-rival AI championship
 description: |
   Play ten cue-sports modes on one Linux PC, including 8-ball, 9-ball,
   10-ball, straight pool, blackball, snooker and carom. Share controls with
   a friend or enter a 48-rival AI championship from Amateur to GOAT.
+  Versus AI offers nine competitive game types.
   Includes original comic portraits, upgraded tables, three retry diamonds,
   ten manual tournament save slots, local high scores, animated aiming,
   stereo effects and lounge music. Rivals react to wins and losses.
