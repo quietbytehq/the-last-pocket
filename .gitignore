@@ -18,3 +18,8 @@ Thumbs.db
 *~
 docs/*.translation
 qa/*.png.import
+
+node_modules/
+.dev.vars*
+.wrangler/
+__pycache__/

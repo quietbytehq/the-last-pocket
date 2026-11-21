@@ -1,15 +1,16 @@
-# Release verification — 0.6.1
+# Release verification — 0.7.0
 
-- All 16 isolated headless source suites passed: 19,609 assertions, zero failures.
-- Controls: 24 focused assertions verify placement, aim, power, spin, called balls/pockets, pause, deadzones, focus loss and AI-turn gating. The native device playthrough passed 24 checks through actual viewport input events, including the two-click mouse shot, keyboard-only menus, modal shooting protection and controller menu navigation. No physical gamepad was connected; controller hardware verification remains outstanding.
-- Manual slots: 92 focused assertions, including ten independent slots, explicit overwrite confirmation, corruption rejection, no implicit progress saves and deterministic restoration of a moving shot.
-- Rival outcomes: 638 assertions verify all 48 identities, 96 unique lines and the correct victory/defeat expression routing.
-- Native mouse/keyboard playthrough: 21 manual-save/pause checks and 16 existing frontend/shooting checks passed. Save → Back → Resume, Journey → Escape → Resume and Help → Back → Resume were exercised using real viewport input events. Four new menu/result captures were visually checked.
-- Clean Linux x86-64 export: all 53 compiled runtime checks passed, including eight embedded outcome atlases, 96 result lines and ten-slot UI controls.
-- Native 1920×1080, Compatibility/Performance, Intel Mesa RPL-P: pool 59.62 fps, snooker 59.39 fps, GOAT AI 59.99 fps across 600/360/360 actual rendered frames. These are averages; occasional frames exceed 16.67 ms. Other hardware/drivers need verification.
-- Automatic progress saving is removed. Legacy match.save files are ignored and left untouched. Settings and the Top Ten remain separate local records. No real player save files were used by these tests.
-- Optional rival result recordings are not bundled: all dialogue is readable on screen, and exact filenames/lines are provided for later MP3 exports.
-- Source and original project artwork/effects: Apache-2.0. Full font/engine notices included. Supplied music remains separately licensed for distribution within the game.
-- Some Dummy-audio teardown runs emit Godot MP3 playback/resource reference warnings without failed assertions. Normal audio/mute checks pass.
+- The original 16 source suites plus the new champion/online suite passed: 19,628 assertions, zero failures. These cover rules, AI, manual saves, controls, all 48 rivals and the new ending/posting flow.
+- New native title/ending/privacy playthrough: 9/9 checks passed. Title-only group art, final-win trophy scene, player name, Continue, champion share offer, F2/local-only and no unintended HTTP request were exercised with viewport key and mouse events. Rendered title, corrected trophy handover and privacy screens were visually inspected.
+- Local Worker integration: 19 checks passed under real wrangler dev and disposable D1. Valid/best-per-name score, threshold/ceiling/increment/type validation, blocked/leetspeak name, unknown/prototype/array mode, concurrent six-per-hour limit, full salted IP hashes, admin access/deletion, generic server errors, real game post, and champion badge persistence alongside higher incomplete scores.
+- Clean Linux x86-64 export: all 55 compiled runtime checks passed, including both new illustrations. At 1920×1080 Compatibility/Performance on Mesa Intel RPL-P, pool averaged 59.64 fps, snooker 60.00 fps and GOAT AI 59.39 fps across 600/360/360 real GPU frames. Individual frames may exceed 16.67 ms; other hardware/drivers require verification.
+- User deployed the service at lastpocket.quietbytehq.uk before any public hostname request. Scripted live submission appeared and was removed through private admin. A separate actual game-code test submitted a simulated completed tournament: public score, champion badge and stored complete-run category were confirmed, then removed. Board confirmed empty afterwards. Keys were not printed; no other player entries were removed.
+- Some Dummy-audio/headless exits emit ObjectDB/resource reference warnings without assertion failures. Normal playback/mute checks passed previously; original audio is unchanged.
+- The trophy handover was revised twice after user review. The selected final art has the hero supporting the trophy base instead of holding the left handle.
+- Source/original generated art: Apache-2.0. Fonts/engine/music retain NOTICE terms. The selected app icon is unchanged.
 
-Linux x86-64 with OpenGL 3.3-capable graphics is the supported package. The earlier strict-Snap software-rendered test confirmed functional behavior, but llvmpipe at 800×450 did not meet the 60 fps performance assertions. Native hardware performance above is the measured target; software rendering is not a 60 fps guarantee.
+## Limits
+
+Scores and World Champion claims are self-reported, not verified. Open source and a public submission endpoint allow made-up scores and name impersonation. Validation, rate limiting and moderation deter junk, not determined cheating. No extra play-time or completion-versus-score check was introduced. Manual saves stay local; the global service gets only chosen name, points, category and game version, after explicit confirmation.
+
+The new local Snap is assembled with snap pack using the existing installed 0.6.1 runtime/support files and the freshly tested 0.7.0 game, updated metadata and network plug. This session cannot invoke Snapcraft's confined builder; the checked-in canonical recipe remains available via tools/build-snap.sh on a normal Snapcraft/LXD environment. Package/game hashes are compared before installation/publication. Installation and Store publication status are reported separately.

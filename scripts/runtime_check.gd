@@ -50,6 +50,8 @@ func run():
  for tier in range(4):
   for outcome in ["win","loss"]:check(ResourceLoader.exists("res://assets/characters/results/tier_%d_%s.png" % [tier,outcome]),"Rival outcome atlas %d %s is embedded" % [tier,outcome])
  check(ResourceLoader.exists("res://assets/characters/title_hero.png"),"Comic title hero is embedded")
+ check(ResourceLoader.exists("res://assets/characters/title_group.png"),"Group title portrait is embedded")
+ check(ResourceLoader.exists("res://assets/characters/champion_trophy.png"),"Champion trophy scene is embedded")
  for tier in range(4):check(ResourceLoader.exists("res://assets/characters/tier_%d.png" % tier),"Rival portrait atlas %d is embedded" % tier)
  for tier in range(1,4):check(ResourceLoader.exists("res://assets/table/tier_%d.png" % tier),"Upgraded table %d is embedded" % tier)
  # An offscreen viewport ensures the GPU is exercised even if the desktop

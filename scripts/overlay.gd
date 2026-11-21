@@ -1,5 +1,18 @@
 extends Control
 var game
+var champion_reveal=false
+var champion_time=0.0
+var champion_page: Control
+var champion_name: Label
+var champion_score: Label
+var champion_art: TextureRect
+var share_shade: ColorRect
+var share_panel: Panel
+var share_name: LineEdit
+var share_choice: Button
+var share_summary: Label
+var title_group: Texture2D
+var title_solo: Texture2D
 var front: Control
 var front_bg: TextureRect
 var front_dim: ColorRect
@@ -122,6 +135,7 @@ func _ready() -> void:
  _make_menu();_make_settings();_make_help();_make_profiles();_make_frontend();_make_saves()
 
 func _process(_dt: float) -> void:
+ if champion_reveal:champion_time+=_dt
  var vp =get_viewport_rect().size
  var s =minf(vp.x/1600,vp.y/900)
  scale=Vector2.ONE*s;position=(vp-Vector2(1600,900)*s)*0.5
@@ -130,6 +144,7 @@ func _process(_dt: float) -> void:
  call_deferred("ensure_input_focus")
  menu.visible=game.state=="menu" and menu_page=="setup"
  _front_update()
+ if share_shade.visible:move_child(share_shade,get_child_count()-1)
  _sync_profiles()
  settings.visible=game.state=="paused"
  save_shade.visible=game.state=="saves"
@@ -484,25 +499,23 @@ func _art(position_at: Vector2,dimensions: Vector2,parent: Node) -> TextureRect:
  image.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;image.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
  image.mouse_filter=Control.MOUSE_FILTER_IGNORE;parent.add_child(image);return image
 func _wrapped(text: String,position_at: Vector2,dimensions: Vector2,font_size: int,parent: Node,color: Color=LIGHT) -> Label:
- var label=_label(text,position_at,font_size,parent,color);label.size=dimensions
- label.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;return label
+ var label=_label("",position_at,font_size,parent,color)
+ label.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;label.size=dimensions;label.text=text;return label
 func _make_frontend():
  front=Control.new();front.size=Vector2(1600,900);add_child(front)
  front_bg=_art(Vector2.ZERO,Vector2(1600,900),front)
- front_bg.texture=load("res://assets/characters/title_hero.png");front_bg.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_COVERED
+ title_group=load("res://assets/characters/title_group.png")
+ title_solo=load("res://assets/characters/title_hero.png")
+ front_bg.texture=title_group;front_bg.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_COVERED
  front_music=_icon_button("","music",Vector2(1460,23),Vector2(48,45),func():game.toggle_music(),front)
  front_music.tooltip_text="Music on/off [N]"
  front_effects=_icon_button("","sound",Vector2(1520,23),Vector2(48,45),func():game.toggle_sound(),front)
  front_effects.tooltip_text="Sound effects on/off [M]"
  front_dim=ColorRect.new();front_dim.size=Vector2(1600,900);front_dim.color=Color(0.01,0.025,0.03,0.75);front_dim.mouse_filter=Control.MOUSE_FILTER_IGNORE;front.add_child(front_dim)
  title_page=Control.new();front.add_child(title_page)
- _label("QUIETBYTE",Vector2(910,130),25,title_page,GOLD)
- var title=_label("THE LAST",Vector2(910,157),43,title_page,LIGHT);title.add_theme_font_override("font",bold)
- var pocket=_label("POCKET",Vector2(900,210),87,title_page,GOLD);pocket.add_theme_font_override("font",display_font)
- pocket.add_theme_color_override("font_shadow_color",Color(0,0,0,0.7));pocket.add_theme_constant_override("shadow_offset_y",4)
- _label("A LITTLE CHARM. A LOT OF CHALK.",Vector2(914,335),18,title_page,GOLD)
- press_hint=_label("PRESS ANY KEY OR GAMEPAD BUTTON",Vector2(935,412),23,title_page,LIGHT)
- _label("LOCAL VERSUS   /   THE CHAMPIONSHIP",Vector2(916,620),16,title_page,DIM)
+ var title_strip=ColorRect.new();title_strip.position=Vector2(0,812);title_strip.size=Vector2(1600,88);title_strip.color=Color("071715");title_strip.mouse_filter=Control.MOUSE_FILTER_IGNORE;title_page.add_child(title_strip)
+ var start_gold=ColorRect.new();start_gold.position=Vector2(100,812);start_gold.size=Vector2(1400,2);start_gold.color=GOLD;start_gold.mouse_filter=Control.MOUSE_FILTER_IGNORE;title_page.add_child(start_gold)
+ press_hint=_label("PRESS ANY KEY / CLICK / GAMEPAD TO START",Vector2(0,829),25,title_page,GOLD);press_hint.size=Vector2(1600,42);press_hint.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
  hub_page=Control.new();front.add_child(hub_page)
  _label("YOUR NEXT FRAME",Vector2(940,150),36,hub_page,GOLD)
  _label("Choose your company.",Vector2(943,207),21,hub_page,LIGHT)
@@ -543,6 +556,8 @@ Ten named slots. No automatic saves.",Vector2(38,451),Vector2(625,65),19,ai_page
  intro_save=_icon_button(" SAVE","save",Vector2(950,24),Vector2(155,38),func():show_saves("save"),intro_panel)
  result_save=_icon_button(" SAVE","save",Vector2(950,24),Vector2(155,38),func():show_saves("save"),result_panel)
  _make_journey()
+ _make_champion_page()
+ _make_share_page()
  board_panel=_page_panel(Vector2(340,75),Vector2(920,750))
  _label("THE TOP TEN",Vector2(44,28),36,board_panel,GOLD)
  _label("Best championship run per player · saved on this PC",Vector2(46,82),16,board_panel,DIM)
@@ -551,17 +566,21 @@ Ten named slots. No automatic saves.",Vector2(38,451),Vector2(625,65),19,ai_page
   var row=_label("",Vector2(46,177+i*43),22,board_panel,LIGHT);row.size=Vector2(480,40);board_rows.append(row)
   board_wins.append(_label("",Vector2(560,177+i*43),22,board_panel,DIM))
   board_points.append(_label("",Vector2(695,177+i*43),22,board_panel,GOLD))
- _icon_button(" BACK","back",Vector2(45,665),Vector2(830,48),show_hub,board_panel)
+ _icon_button(" BACK","back",Vector2(45,665),Vector2(400,48),show_hub,board_panel)
+ _icon_button(" GLOBAL TOP 100","chart",Vector2(475,665),Vector2(400,48),func():OS.shell_open("https://"+game.OnlineScores.SITE),board_panel)
  front.move_child(front_music,front.get_child_count()-1);front.move_child(front_effects,front.get_child_count()-1)
 func _front_update():
  front.visible=game.state in ["title","menu","intro","result","journey"]
  front_bg.visible=game.state in ["title","menu"]
+ front_bg.texture=title_group if game.state=="title" else title_solo
  front_dim.visible=game.state in ["intro","result","journey"]
  title_page.visible=game.state=="title";hub_page.visible=game.state=="menu" and menu_page=="hub"
  ai_page.visible=game.state=="menu" and menu_page=="ai"
  board_panel.visible=game.state=="menu" and menu_page=="board"
  journey_panel.visible=game.state=="journey"
- intro_panel.visible=game.state=="intro";result_panel.visible=game.state=="result"
+ intro_panel.visible=game.state=="intro";result_panel.visible=game.state=="result" and not champion_reveal
+ champion_page.visible=game.state=="result" and champion_reveal
+ champion_page.modulate.a=minf(1.0,champion_time/0.8)
  intro_save.visible=game.campaign.kind=="tournament";result_save.visible=game.campaign.kind=="tournament"
  if is_instance_valid(press_hint):press_hint.modulate.a=0.48+0.52*(0.5+0.5*sin(game.play_time*3.4))
  front_music.modulate=Color.WHITE if game.music_enabled else Color(0.40,0.40,0.40)
@@ -584,6 +603,10 @@ func show_intro():
  intro_gear.text=game.Campaign.EQUIPMENT[tier]
  intro_diamonds.text=("◆ ".repeat(game.campaign.diamonds)+"   %06d POINTS" % game.campaign.points) if game.campaign.kind=="tournament" else "SINGLE FRAME  /  "+game.rules.MODES[game.rules.mode]
 func show_result():
+ champion_reveal=game.campaign.kind=="tournament" and game.campaign.wins==48
+ champion_time=0.0
+ champion_name.text=game.campaign.human_name.to_upper()
+ champion_score.text="%06d POINTS  ·  ALL 48 RIVALS DEFEATED" % game.campaign.points
  var won=game.rules.winner==0
  result_art.texture=_portrait(game.campaign.rival(),"loss" if won else "win") if game.campaign.kind!="local" else load("res://assets/characters/title_hero.png")
  result_title.text="FRAME WON!" if won else "FRAME LOST"
@@ -734,7 +757,9 @@ func _focus_journey_card(card: Control):
 func input_focus_candidates() -> Array[Control]:
  var candidates: Array[Control]=[]
  var scope: Node=self
- if help_panel.visible:scope=help_panel
+ if share_shade.visible:scope=share_panel
+ elif champion_reveal and game.state=="result":scope=champion_page
+ elif help_panel.visible:scope=help_panel
  elif game.state=="paused":scope=settings
  elif game.state=="saves":scope=save_panel
  elif game.state=="intro":scope=intro_panel
@@ -769,3 +794,46 @@ func activate_input_focus():
  var current=get_viewport().gui_get_focus_owner()
  if current is OptionButton:current.show_popup()
  elif current is Button:current.pressed.emit()
+
+
+func _make_champion_page():
+ champion_page=Control.new();champion_page.size=Vector2(1600,900);front.add_child(champion_page)
+ champion_art=_art(Vector2.ZERO,Vector2(1600,900),champion_page);champion_art.texture=load("res://assets/characters/champion_trophy.png");champion_art.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+ var top=_label("THE LAST POCKET · WORLD CHAMPION",Vector2(0,18),32,champion_page,GOLD);top.size=Vector2(1600,52);top.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;top.add_theme_font_override("font",display_font)
+ champion_name=_label("",Vector2(70,792),31,champion_page,GOLD);champion_name.size=Vector2(1000,45)
+ champion_score=_label("",Vector2(72,838),19,champion_page,LIGHT)
+ _icon_button(" CONTINUE","play",Vector2(1195,808),Vector2(320,58),func():game.result_primary(),champion_page)
+ _label("Four clubs conquered. A champion welcomed by every rival.",Vector2(70,762),17,champion_page,DIM)
+
+func _make_share_page():
+ share_shade=ColorRect.new();share_shade.size=Vector2(1600,900);share_shade.color=Color(0.015,0.025,0.035,0.94);share_shade.z_index=95;share_shade.visible=false;add_child(share_shade)
+ share_panel=_page_panel(Vector2(305,140),Vector2(990,620));share_panel.reparent(share_shade)
+ _label("YOUR PLACE IN THE WORLD",Vector2(42,30),32,share_panel,GOLD)
+ share_summary=_wrapped("",Vector2(44,88),Vector2(900,70),23,share_panel,LIGHT)
+ _label("ONLINE NAME · A–Z / 0–9 / SPACE / . _ - · MAX 12",Vector2(44,176),16,share_panel,DIM)
+ share_name=LineEdit.new();share_name.position=Vector2(42,210);share_name.size=Vector2(900,55);share_name.max_length=12;share_panel.add_child(share_name)
+ share_choice=_icon_button("","chart",Vector2(42,287),Vector2(900,58),toggle_online_choice,share_panel)
+ # Existing icon family keeps this menu consistent with the game.
+ share_choice.icon=load("res://assets/ui/icons/chart.svg")
+ _wrapped("Saving online sends this name, points, run category and game version to "+game.OnlineScores.SITE+". Scores and champion claims are self-reported. Offline posts are dropped without interrupting play.",Vector2(44,365),Vector2(900,92),18,share_panel,DIM)
+ _icon_button(" SAVE CHOICE & VIEW TOP TEN","play",Vector2(42,480),Vector2(900,55),func():finish_share(false),share_panel)
+ _icon_button(" LOCAL ONLY · BACK [ESC / B]","back",Vector2(42,550),Vector2(900,43),func():finish_share(true),share_panel)
+
+func show_share():
+ if game.score_offer.is_empty() or game.qa_mode:return
+ share_name.text=game.OnlineScores.clean_name(str(game.score_offer.name))
+ share_summary.text="%06d POINTS" % game.score_offer.points
+ if game.score_offer.champion:share_summary.text+="  ·  WORLD CHAMPION · ALL 48 RIVALS DEFEATED"
+ update_online_choice();share_shade.visible=true
+func update_online_choice():
+ share_choice.text=" ONLINE POSTING ON · F2 / PAD X / CLICK: SWITCH TO LOCAL ONLY" if game.online_enabled else " LOCAL ONLY · F2 / PAD X / CLICK: ENABLE ONLINE POSTING"
+func toggle_online_choice():
+ game.online_enabled=not game.online_enabled;game._save_settings();update_online_choice()
+func finish_share(local_only: bool):
+ if not share_shade.visible:return
+ if local_only:
+  game.online_enabled=false;game._save_settings()
+ var name=game.OnlineScores.clean_name(share_name.text)
+ if name.is_empty():name="PLAYER"
+ game.finish_online_share(name,local_only)
+ share_shade.visible=false

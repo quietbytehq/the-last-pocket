@@ -1,7 +1,7 @@
-# Release verification — 0.6.1
+# Release verification — 0.7.0
 
-All 16 isolated source suites passed (19,609 assertions). Manual-save UI input checks passed 21/21; existing frontend/shooting input checks passed 16/16. These cover explicit saving, overwrite confirmation, pause navigation, exact moving-shot restoration and all 48 rival outcomes. The new device playthrough passed 24/24 mouse/keyboard/simulated-gamepad checks; the final-ball input playthrough passed 6/6. No physical gamepad was connected, so controller hardware verification remains outstanding. The exported game runtime/performance checks are recorded in RELEASE_VALIDATION.md.
+Source checks: 19,628 assertions across 17 suites, zero failures. New native title/ending/privacy checks: 9/9. Local Worker/D1 integration checks: 19/19, including actual game submission and champion badge aggregation. Live score, champion badge and admin cleanup passed after user deployment; board empty after testing. See RELEASE_VALIDATION.md for test scope and limitations.
 
-Native Linux x86-64, Godot 4.7.2 Compatibility/Performance, Mesa Intel RPL-P at 1920×1080: pool 59.62 fps, snooker 59.39 fps and GOAT AI 59.99 fps across 600/360/360 rendered frames. These are averages; occasional frames exceed 16.67 ms and other hardware/drivers need verification.
+Clean Linux export: 55 runtime checks passed. At native 1920×1080 Compatibility/Performance on Mesa Intel RPL-P: pool 59.64 fps, snooker 60.00 fps, GOAT AI 59.39 fps. These are averages, not guarantees for every frame or device. The earlier llvmpipe strict-Snap test did not reach 60 fps. Linux x86-64/OpenGL 3.3 is supported; Windows, ARM and network multiplayer are not included.
 
-The supported release is Linux x86-64 with OpenGL 3.3-capable graphics. The previous strict Snap software-rendered run passed functional checks but missed the 60 fps assertions under llvmpipe. ARM, Windows and network multiplayer are not included. See RELEASE_VALIDATION.md for scope and limitations.
+Scores and champion claims are self-reported; fake submissions remain possible. Personal score sharing is explicit and optional, remembers local-only and never uploads local history or save slots. Offline posts are silently dropped.

@@ -5,6 +5,10 @@ const Table=preload("res://scripts/table.gd")
 const Campaign=preload("res://scripts/campaign.gd")
 const Board=preload("res://scripts/leaderboard.gd")
 const AIPlanner=preload("res://scripts/ai.gd")
+const OnlineScores=preload("res://scripts/online.gd")
+var online_enabled=true
+var online_endpoint=OnlineScores.URL
+var score_offer={}
 const Controls=preload("res://scripts/controls.gd")
 var controls=Controls.new()
 const Overlay=preload("res://scripts/overlay.gd")
@@ -193,6 +197,11 @@ func _input(event: InputEvent) -> void:
   charging=false;get_viewport().set_input_as_handled()
 
 func _unhandled_input(event: InputEvent) -> void:
+ if ui.share_shade.visible:
+  if event is InputEventKey and event.pressed and not event.echo:
+   if event.keycode==KEY_F2:ui.toggle_online_choice()
+   elif event.keycode==KEY_ESCAPE:ui.finish_share(true)
+  return
  if event is InputEventKey and event.pressed and not event.echo:
   if event.keycode==KEY_M:toggle_sound();return
   if event.keycode==KEY_N:toggle_music();return
@@ -281,6 +290,14 @@ func _notification(what: int) -> void:
   controls.clear();charging=false;power_drag=false;spin_drag=false
 
 func _pad_pressed(button: int) -> void:
+ if ui.share_shade.visible:
+  if button==JOY_BUTTON_B:ui.finish_share(true)
+  elif button==JOY_BUTTON_X:ui.toggle_online_choice()
+  elif button==JOY_BUTTON_A:ui.activate_input_focus()
+  elif button in [JOY_BUTTON_DPAD_UP,JOY_BUTTON_DPAD_DOWN]:ui.move_input_focus(Vector2.UP if button==JOY_BUTTON_DPAD_UP else Vector2.DOWN)
+  return
+ if ui.champion_reveal and state=="result" and button==JOY_BUTTON_B:
+  ui.champion_reveal=false;return
  if state=="title":
   state="menu";ui.show_hub();_play_sound("ui_confirm");return
  if button==JOY_BUTTON_START and state in ["aim","rolling","paused"]:
@@ -421,11 +438,12 @@ func _play_sound(name: String,gain: float=0.6,pan: float=0.0) -> void:
  voice.finished.connect(voice.queue_free);voice.play();active_voices.append(voice)
 func _save_settings() -> void:
  if qa_mode: return
- var config =ConfigFile.new();config.set_value("display","high_quality",high_quality);config.set_value("audio","enabled",sound_enabled);config.set_value("audio","music",music_enabled);config.save("user://settings.cfg")
+ var config =ConfigFile.new();config.set_value("display","high_quality",high_quality);config.set_value("audio","enabled",sound_enabled);config.set_value("audio","music",music_enabled);config.set_value("privacy","online_scores",online_enabled);config.save("user://settings.cfg")
 func _load_settings() -> void:
  high_quality=false
  var config =ConfigFile.new()
  if config.load("user://settings.cfg")==OK:
+  online_enabled=bool(config.get_value("privacy","online_scores",true))
   high_quality=bool(config.get_value("display","high_quality",false));sound_enabled=bool(config.get_value("audio","enabled",true));music_enabled=bool(config.get_value("audio","music",true))
  if not high_quality:
   high_quality=true;toggle_quality()
@@ -669,8 +687,11 @@ func _match_finished():
  if campaign.kind=="tournament" and campaign.finished and campaign.wins==48:_play_sound("tournament_win")
 func result_primary():
  if state!="result":return
+ if ui.champion_reveal:
+  ui.champion_reveal=false;return
  if campaign.kind=="tournament":
-  if campaign.finished:open_menu();ui.show_board();return
+  if campaign.finished:
+   _prepare_score_offer();open_menu();ui.show_board();ui.show_share();return
   if campaign.last_won:
    var promoted=campaign.wins%12==0
    if campaign.advance():
@@ -682,11 +703,12 @@ func result_primary():
   if campaign.kind=="ai":campaign.phase="intro";_start_ai_frame()
   else:start_local(rules.mode)
 func end_tournament():
+ _prepare_score_offer()
  var was_tournament=campaign.kind=="tournament"
  if campaign.kind=="tournament" and not campaign.finished:
   campaign.abandon();_record_run()
  open_menu()
- if was_tournament:ui.show_board()
+ if was_tournament:ui.show_board();ui.show_share()
 func _record_run():
  if campaign.recorded or campaign.kind!="tournament":return
  campaign.recorded=true
@@ -742,3 +764,12 @@ func _reveal_voice(clip: String,delay: float,generation: int):
 func _close_previous_run():
  if campaign.kind=="tournament" and not campaign.recorded and not campaign.finished and campaign.points>0:
   campaign.abandon();_record_run()
+
+func _prepare_score_offer():
+ score_offer={}
+ if campaign.kind=="tournament" and OnlineScores.qualifying(campaign.points):
+  score_offer={"name":campaign.human_name,"points":campaign.points,"champion":campaign.wins==48}
+func finish_online_share(player_name: String,local_only: bool):
+ if not local_only and online_enabled and not score_offer.is_empty() and not qa_mode:
+  OnlineScores.submit(self,player_name,int(score_offer.points),bool(score_offer.champion),online_endpoint)
+ score_offer={}
